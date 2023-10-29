@@ -1,6 +1,5 @@
 package Framework;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public interface Game {
@@ -27,11 +26,13 @@ public interface Game {
 
     /**
      * Method for moving a brick
-     * @param brick, Brick to move
+     *
+     * @param brick,  Brick to move
      * @param Deltax, int representing x value to move
      * @param Deltay, int representing y value to move
+     * @return
      */
-    void moveBrick(Brick brick, int Deltax, int Deltay);
+    Status moveBrick(Brick brick, int Deltax, int Deltay);
 
     /**
      * Method for adding brick at position

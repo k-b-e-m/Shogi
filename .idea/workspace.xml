@@ -4,19 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6508ab0d-f71a-4197-8d0f-593d0920e8dc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/Framework/Brick.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Framework/GameConstants.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/TestList.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/TestAlpha.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="6508ab0d-f71a-4197-8d0f-593d0920e8dc" name="Changes" comment="First test passed for Alpha">
+      <change afterPath="$PROJECT_DIR$/src/main/java/Framework/Status.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Brick.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Brick.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/TestList.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/TestList.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TestAlpha.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestAlpha.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,8 +31,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Enum" />
         <option value="Class" />
+        <option value="Enum" />
       </list>
     </option>
   </component>
@@ -76,6 +72,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="" />
       <recent name="Framework" />
       <recent name="Standard" />
     </key>
@@ -83,7 +80,7 @@
       <recent name="C:\Users\kris6\IdeaProjects\Shogi\src\test" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.TestAlpha.WhenPawnIsMovedOneUpItIsOkay">
+  <component name="RunManager" selected="Gradle.TestAlpha">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.example.Main" />
       <module name="Shogi.main" />
@@ -112,6 +109,29 @@
         <option name="vmOptions" />
       </ExternalSystemSettings>
       <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="TestAlpha" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;TestAlpha&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
@@ -164,8 +184,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.TestAlpha.WhenPawnIsMovedOneUpItIsOkay" />
+        <item itemvalue="Gradle.TestAlpha" />
         <item itemvalue="Gradle.TestAlpha.s" />
+        <item itemvalue="Gradle.TestAlpha.WhenPawnIsMovedOneUpItIsOkay" />
         <item itemvalue="Gradle.Shogi" />
         <item itemvalue="Application.Main" />
       </list>
@@ -180,8 +201,16 @@
       <option name="presentableId" value="Default" />
       <updated>1698548999397</updated>
       <workItem from="1698549000921" duration="1239000" />
-      <workItem from="1698550251455" duration="1790000" />
+      <workItem from="1698550251455" duration="5748000" />
     </task>
+    <task id="LOCAL-00001" summary="First test passed for Alpha">
+      <created>1698552056237</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1698552056237</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -198,13 +227,17 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="First test passed for Alpha" />
+    <option name="LAST_COMMIT_MESSAGE" value="First test passed for Alpha" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/test/java/TestAlpha.java</url>
-          <line>15</line>
-          <option name="timeStamp" value="1" />
+          <line>51</line>
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

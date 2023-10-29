@@ -3,6 +3,7 @@ package Standard;
 import Framework.Brick;
 import Framework.Game;
 import Framework.GameConstants;
+import Framework.Status;
 
 import java.util.List;
 
@@ -29,19 +30,50 @@ public class StandardGame implements Game {
     }
 
     @Override
-    public void moveBrick(Brick brick, int Deltax, int Deltay) {
-        int currentX = -1;
-        int currentY = -1;
+    public Status moveBrick(Brick brick, int Deltax, int Deltay) {
+        int[] currentCords = findBrickCords(brick);
+        int currentY =currentCords[0];
+        int currentX = currentCords[1];
+        Status legalMove = legalMove(brick,Deltax,Deltay);
+        if(!(legalMove == Status.OK)){
+            return legalMove;
+        }
+        moveBrickOnBoard(brick, Deltax, Deltay, currentY, currentX);
+        return legalMove;
+    }
+
+    private void moveBrickOnBoard(Brick brick, int Deltax, int Deltay, int currentY, int currentX) {
+        board[currentY][currentX] = null;
+        board[currentY + Deltay][currentX + Deltax] = brick;
+    }
+
+    private int[] findBrickCords(Brick brick) {
+        int[] currentCoords = new int[2];
         for(int xi = 0; xi< board[0].length;xi++){
             for(int yi = 0;yi<board.length;yi++){
                 if(board[yi][xi]!= null &&board[yi][xi].equals(brick)){
-                    board[yi][xi] = null;
-                    currentY = yi;
-                    currentX = xi;
+                    currentCoords[0] = yi;
+                    currentCoords[1] = xi;
                 }
             }
         }
-        board[currentY+Deltay ][currentX+Deltax] = brick;
+        return currentCoords;
+    }
+
+    private Status legalMove(Brick brick, int deltax, int deltay) {
+        //Checking whether the move is withing the board
+        int[] currentCords = findBrickCords(brick);
+        if(currentCords[0]+deltay> 8 || currentCords[1]+deltax>8){
+            return Status.OUT_OF_BOARD_MOVE;
+        }
+        //For Checking MovingPattern
+        List<int[]> movePatterns = brick.getMovePatterns();
+        for(int[] movepattern: movePatterns){
+            if(movepattern[0]==deltay && movepattern[1]==deltax){
+                return Status.OK;
+            }
+        }
+        return Status.ILLEGAL_MOVE;
     }
 
     @Override

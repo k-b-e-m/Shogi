@@ -7,5 +7,5 @@ public interface Brick {
     GameConstants getType();
 
 
-
+    List<int[]> getMovePatterns();
 }
