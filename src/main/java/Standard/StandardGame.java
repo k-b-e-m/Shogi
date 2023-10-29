@@ -1,17 +1,20 @@
 package Standard;
 
-import Framework.Brick;
-import Framework.Game;
-import Framework.GameConstants;
-import Framework.Status;
+import Framework.*;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class StandardGame implements Game {
     private Brick[][] board;
+    private HashMap<Player,List<Brick>> table;
 
     public StandardGame() {
         this.board = new Brick[9][9];
+        table = new HashMap<>();
+        table.put(Player.RICK,new LinkedList<Brick>());
+        table.put(Player.MORTY,new LinkedList<Brick>());
     }
 
     @Override
@@ -25,26 +28,42 @@ public class StandardGame implements Game {
     }
 
     @Override
-    public List<Brick> getBricksAtTable() {
-        return null;
+    public List<Brick> getBricksAtTable(Player who) {
+        return table.get(Player.RICK);
     }
 
     @Override
-    public Status moveBrick(Brick brick, int Deltax, int Deltay) {
+    public Brick getBrickAtTable(int index) {
+        return table.get(Player.RICK).get(index);
+    }
+
+    @Override
+    public Status moveBrick(Brick brick, int deltax, int deltay) {
+
         int[] currentCords = findBrickCords(brick);
         int currentY =currentCords[0];
         int currentX = currentCords[1];
-        Status legalMove = legalMove(brick,Deltax,Deltay);
+        Status legalMove = legalMove(brick,deltax,deltay);
         if(!(legalMove == Status.OK)){
             return legalMove;
         }
-        moveBrickOnBoard(brick, Deltax, Deltay, currentY, currentX);
+        moveBrickOnBoard(brick, deltax, deltay, currentY, currentX);
         return legalMove;
     }
 
-    private void moveBrickOnBoard(Brick brick, int Deltax, int Deltay, int currentY, int currentX) {
+    private void moveBrickOnBoard(Brick brick, int deltax, int deltay, int currentY, int currentX) {
+        if(brick.getPlayer() == Player.MORTY){
+            deltax = -deltax;
+            deltay = -deltay;
+        }
         board[currentY][currentX] = null;
-        board[currentY + Deltay][currentX + Deltax] = brick;
+        if(board[currentY + deltay][currentX + deltax] != null){
+
+            Player ownerOfBrickMoved = brick.getPlayer();
+            GameConstants typeOfBrickKilled = board[currentY + deltay][currentX + deltax].getType();
+            table.get(ownerOfBrickMoved).add(new StandardBrick(ownerOfBrickMoved, typeOfBrickKilled));
+        }
+        board[currentY + deltay][currentX + deltax] = brick;
     }
 
     private int[] findBrickCords(Brick brick) {
@@ -66,6 +85,12 @@ public class StandardGame implements Game {
         if(currentCords[0]+deltay> 8 || currentCords[1]+deltax>8){
             return Status.OUT_OF_BOARD_MOVE;
         }
+        //Checking whether the move is to a field occupied by a friend
+        if(board[currentCords[0]+deltay][currentCords[1]+deltax]!=null){
+            if(board[currentCords[0]+deltay][currentCords[1]+deltax].getPlayer().equals(brick.getPlayer())){
+                return Status.Field_Occupied_By_Friend;
+            }
+        }
         //For Checking MovingPattern
         List<int[]> movePatterns = brick.getMovePatterns();
         for(int[] movepattern: movePatterns){
@@ -77,8 +102,31 @@ public class StandardGame implements Game {
     }
 
     @Override
-    public void addBrick(GameConstants typeOfBrick, int x, int y) {
-        Brick newBrick = new StandardBrick(typeOfBrick);
+    public void addBrick(Player owner, GameConstants typeOfBrick, int x, int y) {
+        Brick newBrick = new StandardBrick(owner,typeOfBrick);
         board[y][x] = newBrick;
+    }
+
+    @Override
+    public Status placeFromTable(Brick brickAtTable, int x, int y) {
+        if(board[y][x] != null){
+            return Status.Field_Occupied;
+        }
+        Player playerOwningBrick = brickAtTable.getPlayer();
+        boolean brickToBePlacedIsPawn = brickAtTable.getType() == GameConstants.PAWN;
+        if(brickToBePlacedIsPawn){
+            for(int i = 0; i< board.length; i++){
+                Brick brickAtTheseCorrds = board[i][x];
+                if(brickAtTheseCorrds != null){
+                    boolean brickIsPawn = brickAtTheseCorrds.getType() == GameConstants.PAWN;
+                    if(brickAtTheseCorrds.getPlayer().equals(playerOwningBrick) && brickIsPawn){
+                        return Status.Pawn_In_Collumn;
+                    }
+                }
+            }
+        }
+        addBrick(playerOwningBrick,brickAtTable.getType(),x,y);
+        table.get(playerOwningBrick).remove(brickAtTable);
+        return Status.OK;
     }
 }

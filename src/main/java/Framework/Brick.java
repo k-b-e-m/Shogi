@@ -8,4 +8,6 @@ public interface Brick {
 
 
     List<int[]> getMovePatterns();
+
+    Player getPlayer();
 }
