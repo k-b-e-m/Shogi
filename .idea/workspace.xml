@@ -4,16 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6508ab0d-f71a-4197-8d0f-593d0920e8dc" name="Changes" comment="A brick now have move patterns and connot move out of board">
-      <change afterPath="$PROJECT_DIR$/src/main/java/Framework/Player.java" afterDir="false" />
+    <list default="true" id="6508ab0d-f71a-4197-8d0f-593d0920e8dc" name="Changes" comment="Enabled to place bricks and some status exceptions for this">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Brick.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Brick.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/GameConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/GameConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Status.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Status.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/TestList.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/TestList.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/TestAlpha.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestAlpha.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -75,9 +70,9 @@
 }</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="Standard" />
       <recent name="" />
       <recent name="Framework" />
-      <recent name="Standard" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\kris6\IdeaProjects\Shogi\src\test" />
@@ -188,8 +183,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.TestAlpha" />
-        <item itemvalue="Gradle.TestAlpha.s" />
         <item itemvalue="Gradle.TestAlpha.WhenPawnIsMovedOneUpItIsOkay" />
+        <item itemvalue="Gradle.TestAlpha.s" />
         <item itemvalue="Gradle.Shogi" />
         <item itemvalue="Application.Main" />
       </list>
@@ -205,7 +200,9 @@
       <updated>1698548999397</updated>
       <workItem from="1698549000921" duration="1239000" />
       <workItem from="1698550251455" duration="6031000" />
-      <workItem from="1698599957262" duration="5829000" />
+      <workItem from="1698599957262" duration="5963000" />
+      <workItem from="1698657814506" duration="14000" />
+      <workItem from="1699217762619" duration="1005000" />
     </task>
     <task id="LOCAL-00001" summary="First test passed for Alpha">
       <created>1698552056237</created>
@@ -221,7 +218,14 @@
       <option name="project" value="LOCAL" />
       <updated>1698599770714</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Enabled to place bricks and some status exceptions for this">
+      <created>1698605955828</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1698605955828</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -241,6 +245,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First test passed for Alpha" />
     <MESSAGE value="A brick now have move patterns and connot move out of board" />
-    <option name="LAST_COMMIT_MESSAGE" value="A brick now have move patterns and connot move out of board" />
+    <MESSAGE value="Enabled to place bricks and some status exceptions for this" />
+    <option name="LAST_COMMIT_MESSAGE" value="Enabled to place bricks and some status exceptions for this" />
   </component>
 </project>

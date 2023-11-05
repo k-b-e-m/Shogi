@@ -61,7 +61,8 @@ public class StandardGame implements Game {
 
             Player ownerOfBrickMoved = brick.getPlayer();
             GameConstants typeOfBrickKilled = board[currentY + deltay][currentX + deltax].getType();
-            table.get(ownerOfBrickMoved).add(new StandardBrick(ownerOfBrickMoved, typeOfBrickKilled));
+            List<int[]> movePatternOfBrickKilled = brick.getMovePatterns();
+            table.get(ownerOfBrickMoved).add(new StandardBrick(ownerOfBrickMoved, movePatternOfBrickKilled,typeOfBrickKilled));
         }
         board[currentY + deltay][currentX + deltax] = brick;
     }
@@ -102,8 +103,8 @@ public class StandardGame implements Game {
     }
 
     @Override
-    public void addBrick(Player owner, GameConstants typeOfBrick, int x, int y) {
-        Brick newBrick = new StandardBrick(owner,typeOfBrick);
+    public void addBrick(Player owner, List<int[]> movePattern, GameConstants typeOfBrick, int x, int y) {
+        Brick newBrick = new StandardBrick(owner,movePattern,typeOfBrick);
         board[y][x] = newBrick;
     }
 
@@ -125,7 +126,7 @@ public class StandardGame implements Game {
                 }
             }
         }
-        addBrick(playerOwningBrick,brickAtTable.getType(),x,y);
+        addBrick(playerOwningBrick,brickAtTable.getMovePatterns(),brickAtTable.getType(),x,y);
         table.get(playerOwningBrick).remove(brickAtTable);
         return Status.OK;
     }

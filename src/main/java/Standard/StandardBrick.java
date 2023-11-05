@@ -14,17 +14,11 @@ public class StandardBrick implements Brick {
     private List<int[]> movePatterns;
     private Player owner;
 
-    public StandardBrick(Player owner,GameConstants type) {
+    public StandardBrick(Player owner,List<int[]> movePatterns, GameConstants type) {
         this.type = type;
         this.owner = owner ;
-        switch (type){
-            case PAWN -> {
-                movePatterns = new LinkedList<>(Arrays.asList(new int[]{1,0}));
-            }
-            case KNIGHT -> {
-                movePatterns = new LinkedList<>(Arrays.asList(new int[]{2,1},new int[]{2,-1}));
-            }
-        }
+        this.movePatterns = movePatterns;
+        this.type = type;
     }
 
     @Override

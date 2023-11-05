@@ -5,6 +5,10 @@ import Framework.Status;
 import Standard.StandardGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -21,7 +25,7 @@ public class TestAlpha {
     @Test
     public void WhenPawnIsMovedOneUpItIsOkay(){
         //Given a game Where there is a pawn at position 1,1.
-        game.addBrick(Player.RICK, GameConstants.PAWN,1,1);
+        game.addBrick(Player.RICK, new LinkedList<>(Arrays.asList(new int[]{1,0})),GameConstants.PAWN,1,1);
         Brick pawnAt1_1 = game.getBrickAtBoard(1,1);
         //When the brick is moved up one
         Status movedBrick = game.moveBrick(pawnAt1_1,0,1);
@@ -34,7 +38,7 @@ public class TestAlpha {
     @Test
     public void shouldGiveStatusNotOkayWhenPawnIsMovedToSide(){
         //Given a a game with a pawn at position 1,1
-        game.addBrick(Player.RICK, GameConstants.PAWN,1,1);
+        game.addBrick(Player.RICK,new LinkedList<>(Arrays.asList(new int[]{1,0})) ,GameConstants.PAWN,1,1);
         Brick pawn = game.getBrickAtBoard(1,1);
         //When the pawn is moved one to the side:
         Status brickMoved = game.moveBrick(pawn,1,0);
@@ -47,7 +51,7 @@ public class TestAlpha {
     @Test
     public void shouldGiveStatusOutOfBoardMoveWhenPawnTriesToMoveOverEdge(){
         //Given a game where the pawn is at position 1,8 (Edge of board)
-        game.addBrick(Player.RICK, GameConstants.PAWN,1,8);
+        game.addBrick(Player.RICK, new LinkedList<>(Arrays.asList(new int[]{1,0})),GameConstants.PAWN,1,8);
         Brick brickAtBoard = game.getBrickAtBoard(1, 8);
         //When the brick is moved out the board
         Status movedBrick = game.moveBrick(brickAtBoard,0,1);
@@ -58,8 +62,8 @@ public class TestAlpha {
     @Test
     public void shoudlGiveStatusField_Occupied_By_FriendWhenRickMovesPawnAtOwnKnight(){
         //Given a game where Rick has a pawn at position 1,1 and a knight at 2,1
-        game.addBrick(Player.RICK,GameConstants.PAWN,1,1);
-        game.addBrick(Player.RICK,GameConstants.KNIGHT,1,2);
+        game.addBrick(Player.RICK,new LinkedList<>(Arrays.asList(new int[]{1,0})) ,GameConstants.PAWN,1,1);
+        game.addBrick(Player.RICK,new LinkedList<>(Arrays.asList(new int[]{2,1}, new int[]{2,-1})),GameConstants.KNIGHT,1,2);
         Brick pawn = game.getBrickAtBoard(1,1);
         //When Rick moves the brick
         Status moveBrick = game.moveBrick(pawn,0,1);
@@ -71,8 +75,8 @@ public class TestAlpha {
     @Test
     public void shouldAllowRickToMovePawnAndRemoveMortyBrickWhenPawnMovesToMortyField(){
         //Given a game where Rick has a pawn at position (1,1) and morty has a pawn at position (1,2)
-        game.addBrick(Player.RICK,GameConstants.PAWN,1,1);
-        game.addBrick(Player.MORTY,GameConstants.PAWN,1,2);
+        game.addBrick(Player.RICK,new LinkedList<>(Arrays.asList(new int[]{1,0})),GameConstants.PAWN,1,1);
+        game.addBrick(Player.MORTY,new LinkedList<>(Arrays.asList(new int[]{1,0})),GameConstants.PAWN,1,2);
         Brick pawn = game.getBrickAtBoard(1,1);
         //When Rick moves the pawn to (1,2)
         Status moveBrick = game.moveBrick(pawn,0,1);
@@ -85,7 +89,7 @@ public class TestAlpha {
     @Test
     public void shouldMoveMortyPawnAtPosition_1_1_to_0_1_WhenMortyMovesBrick(){
         //Given a game where Morty has a pawn at position (1,1)
-        game.addBrick(Player.MORTY,GameConstants.PAWN,1,1);
+        game.addBrick(Player.MORTY,new LinkedList<>(Arrays.asList(new int[]{1,0})),GameConstants.PAWN,1,1);
         Brick pawn = game.getBrickAtBoard(1,1);
         //When Morty moves the pawn to (0,1)
         Status moveBrick = game.moveBrick(pawn,0,1);
@@ -98,8 +102,8 @@ public class TestAlpha {
     @Test
     public void shouldAddMortyPawnToRickTable(){
         //Given a game where Rick pawn is infornt of morty pawn
-        game.addBrick(Player.RICK,GameConstants.PAWN,1,1);
-        game.addBrick(Player.MORTY,GameConstants.PAWN,1,2);
+        game.addBrick(Player.RICK,new LinkedList<>(Arrays.asList(new int[]{1,0})),GameConstants.PAWN,1,1);
+        game.addBrick(Player.MORTY,new LinkedList<>(Arrays.asList(new int[]{1,0})),GameConstants.PAWN,1,2);
         Brick pawn = game.getBrickAtBoard(1,1);
         //When Rick moves the pawn to (1,2)
         Status moveBrick = game.moveBrick(pawn,0,1);
@@ -112,8 +116,8 @@ public class TestAlpha {
     @Test
     public void shouldAddKnightBrickAndRemoveFromRickTableWhenKnightFromTableIsPlaced(){
         //Given a game where Rick has a knight at his table from killing morty knight
-        game.addBrick(Player.RICK,GameConstants.PAWN,1,1);
-        game.addBrick(Player.MORTY,GameConstants.KNIGHT,1,2);
+        game.addBrick(Player.RICK,new LinkedList<>(Arrays.asList(new int[]{1,0})),GameConstants.PAWN,1,1);
+        game.addBrick(Player.MORTY,new LinkedList<>(Arrays.asList(new int[]{2,1}, new int[]{2,-1})),GameConstants.KNIGHT,1,2);
         Brick pawn = game.getBrickAtBoard(1,1);
         game.moveBrick(pawn,0,1);
         //When Rick places his knight at (3,3) from his table
@@ -128,8 +132,8 @@ public class TestAlpha {
     @Test
     public void shouldGiveStatusPawn_IN_CollumnWhenMortyTriesToPlaceAPawnAtACollumnContainingAPawn(){
         //Given a game where Morty has a pawn at 1,1 and has a pawn at his table
-        game.addBrick(Player.MORTY,GameConstants.PAWN,1,2);
-        game.addBrick(Player.RICK,GameConstants.PAWN,1,1);
+        game.addBrick(Player.MORTY,new LinkedList<>(Arrays.asList(new int[]{1,0})),GameConstants.PAWN,1,2);
+        game.addBrick(Player.RICK,new LinkedList<>(Arrays.asList(new int[]{1,0})),GameConstants.PAWN,1,1);
         game.moveBrick(game.getBrickAtBoard(1,1),0,1);
         //When Morty tries to place a pawn at (3,1)
         Status placedBrick = game.placeFromTable(game.getBrickAtTable(0),1,3);

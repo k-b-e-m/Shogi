@@ -42,15 +42,6 @@ public interface Game {
      */
     Status moveBrick(Brick brick, int Deltax, int Deltay);
 
-    /**
-     * Method for adding brick at position
-     *
-     * @param owner Player representing owner of brick
-     * @param typeOfBrick GameConstants representing type of brick
-     * @param x,   int representing x position of where to place brick
-     * @param y    int representing y position of where to place brick
-     */
-    void addBrick(Player owner, GameConstants typeOfBrick, int x, int y);
 
     /**
      * Method for placing a brick from the table
@@ -60,6 +51,19 @@ public interface Game {
      * @param y int representing y position of where to place brick
      * @return Status representing status of placement
      */
+
+
+    /**
+     * Method for adding brick at position
+     *
+     * @param owner Player representing owner of brick
+     * @param movePattern List<int[]> representing move pattern of brick
+     * @param typeOfBrick GameConstants representing type of brick
+     * @param x,   int representing x position of where to place brick
+     * @param y    int representing y position of where to place brick
+     */
+
+    void addBrick(Player owner, List<int[]> movePattern, GameConstants typeOfBrick, int x, int y);
 
     /**
      * method for placing a brick from the table on the board
