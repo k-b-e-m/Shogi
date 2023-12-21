@@ -8,11 +8,16 @@ import java.util.List;
 
 public class StandardGame implements Game {
     private Brick[][] board;
+    private List<Brick>[][] threatMap;
     private HashMap<Player,List<Brick>> table;
+    //Currently only implements one king at a time.
+    private HashMap<Player,Brick> kings;
 
     public StandardGame() {
         this.board = new Brick[9][9];
+        this.threatMap = new LinkedList[9][9];
         table = new HashMap<>();
+        kings = new HashMap<>();
         table.put(Player.RICK,new LinkedList<Brick>());
         table.put(Player.MORTY,new LinkedList<Brick>());
     }
@@ -48,6 +53,7 @@ public class StandardGame implements Game {
             return legalMove;
         }
         moveBrickOnBoard(brick, deltax, deltay, currentY, currentX);
+        threatMapUpdater(currentX + deltax, currentY + deltay, brick);
         return legalMove;
     }
 
@@ -92,6 +98,29 @@ public class StandardGame implements Game {
                 return Status.Field_Occupied_By_Friend;
             }
         }
+
+        //Checking whether king is in check
+        Player player = brick.getPlayer();
+        boolean kingIsInCheck = getCheck(player);
+        if(kingIsInCheck){
+            boolean newMoveisInOfCheck = false;
+            boolean brickIsKing = brick.getType() == GameConstants.KING;
+            if(brickIsKing) {
+                newMoveisInOfCheck = threatMap[currentCords[0] + deltay][currentCords[1] + deltax].stream().map(brick1 -> brick1.getPlayer()).collect(java.util.stream.Collectors.toList()).contains(computeOpponent(player));
+            }
+            else{
+                Brick king = kings.get(player);
+                int[] kingCords = findBrickCords(king);
+                int kingX = kingCords[1];
+                int kingY = kingCords[0];
+                newMoveisInOfCheck = threatMap[kingY][kingX].stream().map(brick1 -> brick1.getPlayer()).collect(java.util.stream.Collectors.toList()).contains(computeOpponent(player));
+
+            }
+            if(newMoveisInOfCheck){
+                return Status.KING_IN_CHECK;
+            }
+        }
+
         //For Checking MovingPattern
         List<int[]> movePatterns = brick.getMovePatterns();
         for(int[] movepattern: movePatterns){
@@ -99,6 +128,7 @@ public class StandardGame implements Game {
                 return Status.OK;
             }
         }
+
         return Status.ILLEGAL_MOVE;
     }
 
@@ -106,6 +136,25 @@ public class StandardGame implements Game {
     public void addBrick(Player owner, List<int[]> movePattern, GameConstants typeOfBrick, int x, int y) {
         Brick newBrick = new StandardBrick(owner,movePattern,typeOfBrick);
         board[y][x] = newBrick;
+        boolean newBrickIsKing = newBrick.getType() == GameConstants.KING;
+        if(newBrickIsKing){
+            kings.put(newBrick.getPlayer(),newBrick);
+        }
+        threatMapUpdater(x, y, newBrick);
+    }
+
+    private void threatMapUpdater(int x, int y, Brick brick) {
+        for(int[] move: brick.getMovePatterns()){
+            boolean outOfBoard = y + move[0] == board.length || x + move[1] == 9;
+            if(outOfBoard){
+                continue;
+            }
+            if(threatMap[y +move[0]][x +move[1]] == null){
+                threatMap[y +move[0]][x +move[1]] = new LinkedList<>();
+            }
+
+            threatMap[y +move[0]][x +move[1]].add(brick);
+        }
     }
 
     @Override
@@ -129,5 +178,34 @@ public class StandardGame implements Game {
         addBrick(playerOwningBrick,brickAtTable.getMovePatterns(),brickAtTable.getType(),x,y);
         table.get(playerOwningBrick).remove(brickAtTable);
         return Status.OK;
+    }
+
+    @Override
+    public boolean getCheck(Player player) {
+        //For games where no king is present
+        if(!kings.containsKey(player)){
+            return false;
+        }
+        int[] kingCords = findBrickCords(kings.get(player));
+        int kingX = kingCords[1];
+        int kingY = kingCords[0];
+        boolean enemyIsThreateningKing = 0 != threatMap[kingY][kingX].stream().map(brick -> brick.getPlayer()).count();
+        return enemyIsThreateningKing;
+    }
+
+    public void printBoard(){
+        for(int i = 0; i< board.length; i++){
+            for(int j = 0; j<board[0].length;j++){
+                if(board[i][j] == null){
+                    System.out.print("  0  ");
+                }else{
+                    System.out.print(board[i][j].getType() + " " + board[i][j].getPlayer().toString().charAt(0));
+                }
+            }
+            System.out.println();
+        }
+    }
+    private Player computeOpponent(Player player){
+        return player == Player.RICK ? Player.MORTY : Player.RICK;
     }
 }

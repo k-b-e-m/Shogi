@@ -73,4 +73,6 @@ public interface Game {
      * @return Status representing status of placement
      */
     Status placeFromTable(Brick brickAtTable, int x, int y);
+
+    boolean getCheck(Player player);
 }
