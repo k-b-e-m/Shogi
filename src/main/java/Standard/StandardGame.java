@@ -89,18 +89,90 @@ public class StandardGame implements Game {
     private Status legalMove(Brick brick, int deltax, int deltay) {
         //Checking whether the move is withing the board
         int[] currentCords = findBrickCords(brick);
-        if(currentCords[0]+deltay> 8 || currentCords[1]+deltax>8){
-            return Status.OUT_OF_BOARD_MOVE;
-        }
+        Status outOfBoardMove = moveIsOutOfBoard(deltax, deltay, currentCords);
+        if(outOfBoardMove != null) return outOfBoardMove;
+
         //Checking whether the move is to a field occupied by a friend
-        if(board[currentCords[0]+deltay][currentCords[1]+deltax]!=null){
-            if(board[currentCords[0]+deltay][currentCords[1]+deltax].getPlayer().equals(brick.getPlayer())){
-                return Status.Field_Occupied_By_Friend;
-            }
-        }
+        Status field_Occupied_By_Friend = moveIsOccupiedByFriend(brick, deltax, deltay, currentCords);
+        if (field_Occupied_By_Friend != null) return field_Occupied_By_Friend;
 
         //Checking whether king is in check
         Player player = brick.getPlayer();
+        Status kingInCheck = checkingForCheckMove(brick, deltax, deltay, player, currentCords);
+        if (kingInCheck != null) return kingInCheck;
+
+        //Movepattern Checks
+
+        GameConstants brickType = brick.getType();
+        //For Rook
+        if(brickType == GameConstants.ROOK){
+            return moveCheckerForRook(brick, deltax, deltay, brickType, currentCords);
+        }
+
+        //For Checking MovingPattern for other bricks
+        Status ok = moveCheckerForBasicPieces(brick, deltax, deltay);
+        if (ok != null) return ok;
+        return Status.ILLEGAL_MOVE;
+    }
+
+    private static Status moveCheckerForBasicPieces(Brick brick, int deltax, int deltay) {
+        List<int[]> movePatterns = brick.getMovePatterns();
+        for(int[] movepattern: movePatterns){
+            if(movepattern[0]== deltay && movepattern[1]== deltax){
+                return Status.OK;
+            }
+        }
+        return null;
+    }
+
+
+    private Status moveCheckerForRook(Brick brick, int deltax, int deltay, GameConstants brickType, int[] currentCords) {
+            System.out.println("Rook");
+            boolean mayMove = false;
+            List<int[]> movePatterns = brick.getMovePatterns();
+            for(int[] movepattern: movePatterns){
+                if(movepattern[0]== deltay && movepattern[1]== deltax){
+                    mayMove = true;
+                }
+            }
+            if(mayMove){
+                if(deltay !=0){
+                    if(deltay >0){
+                        for(int i = 1; i< deltay; i++){
+                            if(board[currentCords[0]+i][currentCords[1]]!=null){
+                                return Status.MOVE_BLOCKED_BY_PIECE;
+                            }
+                        }
+                    }
+                    else{
+                        for(int i = -1; i> deltay; i--){
+                            if(board[currentCords[0]+i][currentCords[1]]!=null){
+                                return Status.MOVE_BLOCKED_BY_PIECE;
+                            }
+                        }
+                    }
+                }
+                else if (deltax != 0){
+                    if(deltax >0){
+                        for(int i = 1; i< deltax; i++){
+                            if(board[currentCords[0]][currentCords[1]+i]!=null){
+                                return Status.MOVE_BLOCKED_BY_PIECE;
+                            }
+                        }
+                    }
+                    else{
+                        for(int i = -1; i> deltax; i--){
+                            if(board[currentCords[0]][currentCords[1]+i]!=null){
+                                return Status.MOVE_BLOCKED_BY_PIECE;
+                            }
+                        }
+                    }
+                }
+            }
+            return Status.OK;
+    } //TODO Consider if refactoring is needed
+
+    private Status checkingForCheckMove(Brick brick, int deltax, int deltay, Player player, int[] currentCords) {
         boolean kingIsInCheck = getCheck(player);
         if(kingIsInCheck){
             boolean newMoveisInOfCheck = false;
@@ -120,16 +192,23 @@ public class StandardGame implements Game {
                 return Status.KING_IN_CHECK;
             }
         }
+        return null;
+    }
 
-        //For Checking MovingPattern
-        List<int[]> movePatterns = brick.getMovePatterns();
-        for(int[] movepattern: movePatterns){
-            if(movepattern[0]==deltay && movepattern[1]==deltax){
-                return Status.OK;
+    private Status moveIsOccupiedByFriend(Brick brick, int deltax, int deltay, int[] currentCords) {
+        if(board[currentCords[0]+ deltay][currentCords[1]+ deltax]!=null){
+            if(board[currentCords[0]+ deltay][currentCords[1]+ deltax].getPlayer().equals(brick.getPlayer())){
+                return Status.Field_Occupied_By_Friend;
             }
         }
+        return null;
+    }
 
-        return Status.ILLEGAL_MOVE;
+    private static Status moveIsOutOfBoard(int deltax, int deltay, int[] currentCords) {
+        if(currentCords[0]+ deltay > 8 || currentCords[1]+ deltax >8){
+            return Status.OUT_OF_BOARD_MOVE;
+        }
+        return null;
     }
 
     @Override
@@ -145,7 +224,7 @@ public class StandardGame implements Game {
 
     private void threatMapUpdater(int x, int y, Brick brick) {
         for(int[] move: brick.getMovePatterns()){
-            boolean outOfBoard = y + move[0] == board.length || x + move[1] == 9;
+            boolean outOfBoard = y + move[0] >= board.length || x + move[1] >= board[0].length || y + move[0] < 0 || x + move[1] < 0;
             if(outOfBoard){
                 continue;
             }

@@ -1,7 +1,4 @@
 TestList
-* the Rook can move any number of squares along the x axis
-* the Rook can move any number of squares along the y axis
-* the Rook can not move through other pieces
 * When Rick moves a pawn that puts his king in check, the move is not allowed and gets status "Move_Puts_Yourself_In_Check"
 * When Rick has Morty's king in a checkmate, Rick wins the game.
 * When Ricks's pawn is tried to being placed before a friendly knight, the move is not allowed and gets status "NO_LEGAL_MOVES_AVAILABLE"
@@ -12,7 +9,10 @@ TestList
 * When the same sequence of moves is repeated 4 times, and morty make rick check all three times, Morty loses game.
 
 
+
   **Done**
+* [OK] the Rook can not move through other pieces
+* [OK] the Rook cannot move through other pieces
 * [OK] When Morty is in check and moves his king out of check, the move is allowed and the king is moved.
 * [OK] When Morty has Morty's king in a check, Morty must move his king out of check or block the check.
 * [OK] When Rick move his pawn to from 1,3 to 1,4 and mortys king is at 1,5. Morty is now in check.

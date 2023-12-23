@@ -1,4 +1,8 @@
 **Ideas and goals for project**
+** TODO
+Make the moveset a strategy pattern
+Make the check calculation us the strategy pattern
+
 
 ** Goals **
 - Create a real representation of the game of shogi

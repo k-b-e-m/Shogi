@@ -1,6 +1,6 @@
 package Framework;
 
 public enum GameConstants {
-    KNIGHT, PAWN, KING
+    KNIGHT, PAWN, ROOK, KING
 
 }
