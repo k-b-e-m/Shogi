@@ -1,5 +1,5 @@
 TestList
-* When Rick moves a pawn that puts his king in check, the move is not allowed and gets status "Move_Puts_Yourself_In_Check"
+* When morty is in check he can not move his king into another check
 * When Rick has Morty's king in a checkmate, Rick wins the game.
 * When Ricks's pawn is tried to being placed before a friendly knight, the move is not allowed and gets status "NO_LEGAL_MOVES_AVAILABLE"
 * When Ricks's pawn is tried to be placed before the edge of the board, the move is not allowed and gets status "NO_LEGAL_MOVES_AVAILABLE"
@@ -11,6 +11,7 @@ TestList
 
 
   **Done**
+* [OK] When Rick moves a pawn that puts his king in check, the move is not allowed and gets status "Move_Puts_Yourself_In_Check"
 * [OK] the Rook can not move through other pieces
 * [OK] the Rook cannot move through other pieces
 * [OK] When Morty is in check and moves his king out of check, the move is allowed and the king is moved.

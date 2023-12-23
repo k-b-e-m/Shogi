@@ -217,4 +217,29 @@ public class TestAlpha {
     }
 
 
+    @Test
+    public void shouldNotAllowToMovePawnThatPutsOneSelfInCheck(){
+        //Given a game where morty has a King at 1,1, a pawn at 2,1 and rick has a rook at 5,1
+        game.addBrick(Player.MORTY, KingPattern, GameConstants.KING, 1, 1);
+        game.addBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, 2, 1);
+        game.addBrick(Player.RICK, RookPattern, GameConstants.ROOK, 5, 1);
+        //When Morty tries to move his pawn to 2,2
+        Brick brickToBeMoved = game.getBrickAtBoard(2, 1);
+        Status mortyMove = game.moveBrick(brickToBeMoved, 0, 1);
+        //Then he gets status PUTS_ONESELF_IN_CHECK
+        assertThat(mortyMove, is(Status.PUTS_ONESELF_IN_CHECK));
+    }
+
+/**    @Test
+    public void shouldNotAllowMoveKingIntoCheck(){
+        //Given a game where morty has a King at 1,1 and rick has a rook at 5,1
+        game.addBrick(Player.MORTY, KingPattern, GameConstants.KING, 1, 1);
+        game.addBrick(Player.RICK, RookPattern, GameConstants.ROOK, 5, 1);
+        //When Morty tries to move his king to 2,1
+        Brick brickToBeMoved = game.getBrickAtBoard(1, 1);
+        Status mortyMove = game.moveBrick(brickToBeMoved, 1, 0);
+        //Then he gets status PUTS_ONESELF_IN_CHECK
+        assertThat(mortyMove,is(Status.PUTS_ONESELF_IN_CHECK));
+    }
+*/
 }

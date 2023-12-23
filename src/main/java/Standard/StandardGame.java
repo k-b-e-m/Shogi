@@ -5,6 +5,7 @@ import Framework.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StandardGame implements Game {
     private Brick[][] board;
@@ -54,6 +55,9 @@ public class StandardGame implements Game {
         }
         moveBrickOnBoard(brick, deltax, deltay, currentY, currentX);
         threatMapUpdater(currentX + deltax, currentY + deltay, brick);
+        for(Brick threatingBrick : threatMap[currentY][currentX]){
+            threatMapUpdater(currentX, currentY, threatingBrick);
+        }
         return legalMove;
     }
 
@@ -101,8 +105,18 @@ public class StandardGame implements Game {
         Status kingInCheck = checkingForCheckMove(brick, deltax, deltay, player, currentCords);
         if (kingInCheck != null) return kingInCheck;
 
-        //Movepattern Checks
+        //Check whether move results in putting oneself in check
+        if(brick.getType() != GameConstants.KING){
+            Status putsOneselfInCheck = oneInOwnCheckByMovingNonKing(currentCords);
+            if (putsOneselfInCheck != null) return putsOneselfInCheck;
+        }
+        else{
+            Status putsOneselfInCheck = oneInOwnCheckByMovingKing(currentCords, deltax, deltay,brick);
+            if (putsOneselfInCheck != null) return putsOneselfInCheck;
+        }
 
+
+        //Movepattern Checks
         GameConstants brickType = brick.getType();
         //For Rook
         if(brickType == GameConstants.ROOK){
@@ -113,6 +127,29 @@ public class StandardGame implements Game {
         Status ok = moveCheckerForBasicPieces(brick, deltax, deltay);
         if (ok != null) return ok;
         return Status.ILLEGAL_MOVE;
+    }
+
+    private Status oneInOwnCheckByMovingKing(int[] currentCords, int deltax, int deltay, Brick brick) {
+        List<Brick> newThreat = threatMap[currentCords[0]+deltay][currentCords[1]+deltax];
+        if(newThreat!=null){
+            return newThreat.stream().filter(b -> b.getPlayer().equals(computeOpponent(brick.getPlayer()))).collect(Collectors.toList()).size() >0 ? Status.PUTS_ONESELF_IN_CHECK:null;
+        }
+        return null;
+    }
+
+    private Status oneInOwnCheckByMovingNonKing(int[] currentCords) {
+        int x = currentCords[1];
+        int y = currentCords[0];
+        Brick brickToMove = board[y][x];
+        board[y][x] = null;
+        threatMap[y][x].forEach(brick -> threatMapUpdater(x,y,brick));
+        boolean kingIsInCheck = getCheck(brickToMove.getPlayer());
+        board[y][x] = brickToMove;
+        threatMap[y][x].forEach(brick -> threatMapUpdater(x,y,brick));
+        if(kingIsInCheck){
+            return Status.PUTS_ONESELF_IN_CHECK;
+        }
+        return null;
     }
 
     private static Status moveCheckerForBasicPieces(Brick brick, int deltax, int deltay) {
@@ -127,49 +164,49 @@ public class StandardGame implements Game {
 
 
     private Status moveCheckerForRook(Brick brick, int deltax, int deltay, GameConstants brickType, int[] currentCords) {
-            System.out.println("Rook");
-            boolean mayMove = false;
-            List<int[]> movePatterns = brick.getMovePatterns();
-            for(int[] movepattern: movePatterns){
-                if(movepattern[0]== deltay && movepattern[1]== deltax){
-                    mayMove = true;
-                }
+        System.out.println("Rook");
+        boolean mayMove = false;
+        List<int[]> movePatterns = brick.getMovePatterns();
+        for(int[] movepattern: movePatterns){
+            if(movepattern[0]== deltay && movepattern[1]== deltax){
+                mayMove = true;
             }
-            if(mayMove){
-                if(deltay !=0){
-                    if(deltay >0){
-                        for(int i = 1; i< deltay; i++){
-                            if(board[currentCords[0]+i][currentCords[1]]!=null){
-                                return Status.MOVE_BLOCKED_BY_PIECE;
-                            }
-                        }
-                    }
-                    else{
-                        for(int i = -1; i> deltay; i--){
-                            if(board[currentCords[0]+i][currentCords[1]]!=null){
-                                return Status.MOVE_BLOCKED_BY_PIECE;
-                            }
+        }
+        if(mayMove){
+            if(deltay !=0){
+                if(deltay >0){
+                    for(int i = 1; i< deltay; i++){
+                        if(board[currentCords[0]+i][currentCords[1]]!=null){
+                            return Status.MOVE_BLOCKED_BY_PIECE;
                         }
                     }
                 }
-                else if (deltax != 0){
-                    if(deltax >0){
-                        for(int i = 1; i< deltax; i++){
-                            if(board[currentCords[0]][currentCords[1]+i]!=null){
-                                return Status.MOVE_BLOCKED_BY_PIECE;
-                            }
-                        }
-                    }
-                    else{
-                        for(int i = -1; i> deltax; i--){
-                            if(board[currentCords[0]][currentCords[1]+i]!=null){
-                                return Status.MOVE_BLOCKED_BY_PIECE;
-                            }
+                else{
+                    for(int i = -1; i> deltay; i--){
+                        if(board[currentCords[0]+i][currentCords[1]]!=null){
+                            return Status.MOVE_BLOCKED_BY_PIECE;
                         }
                     }
                 }
             }
-            return Status.OK;
+            else if (deltax != 0){
+                if(deltax >0){
+                    for(int i = 1; i< deltax; i++){
+                        if(board[currentCords[0]][currentCords[1]+i]!=null){
+                            return Status.MOVE_BLOCKED_BY_PIECE;
+                        }
+                    }
+                }
+                else{
+                    for(int i = -1; i> deltax; i--){
+                        if(board[currentCords[0]][currentCords[1]+i]!=null){
+                            return Status.MOVE_BLOCKED_BY_PIECE;
+                        }
+                    }
+                }
+            }
+        }
+        return Status.OK;
     } //TODO Consider if refactoring is needed
 
     private Status checkingForCheckMove(Brick brick, int deltax, int deltay, Player player, int[] currentCords) {
@@ -223,19 +260,84 @@ public class StandardGame implements Game {
     }
 
     private void threatMapUpdater(int x, int y, Brick brick) {
-        for(int[] move: brick.getMovePatterns()){
-            boolean outOfBoard = y + move[0] >= board.length || x + move[1] >= board[0].length || y + move[0] < 0 || x + move[1] < 0;
-            if(outOfBoard){
-                continue;
-            }
-            if(threatMap[y +move[0]][x +move[1]] == null){
-                threatMap[y +move[0]][x +move[1]] = new LinkedList<>();
-            }
-
-            threatMap[y +move[0]][x +move[1]].add(brick);
+        if(threatMap[y][x] == null){
+            threatMap[y][x] = new LinkedList<>();
         }
-    }
+        //Clear for previous threts by brick
+        for(int i = 0; i< threatMap.length; i++){
+            for(int j = 0; j<threatMap[0].length;j++){
+                if(threatMap[i][j]!= null){
+                    threatMap[i][j].remove(brick);
+                }
+            }
+        }
+        //Add the new threat for brick
+        if (brick.getType() == GameConstants.ROOK) {
+            for(int i = y; i< board.length; i++){
+                if(threatMap[i][x] == null){
+                    threatMap[i][x] = new LinkedList<>();
+                }
+                if(board[i][x]!= null){
+                    break;
+                }
+                else{
+                    threatMap[i][x].add(brick);
+                }
 
+            }
+            for(int i = y-1; i> -1; i--){
+                if(threatMap[i][x] == null){
+                    threatMap[i][x] = new LinkedList<>();
+                }
+                if(board[i][x]!= null){
+                    break;
+                }
+                else{
+                    threatMap[i][x].add(brick);
+                }
+
+            }
+
+            for(int i = x; i< board.length; i++){
+                if(threatMap[y][i] == null){
+                    threatMap[y][i] = new LinkedList<>();
+                }
+                if(board[y][i]!= null){
+                    break;
+                }
+                else{
+                    threatMap[y][i].add(brick);
+                }
+
+            }
+            for(int i = x-1; i< -1; i--){
+                if(threatMap[y][i] == null){
+                    threatMap[y][i] = new LinkedList<>();
+                }
+                if(board[y][i]!= null){
+                    break;
+                }
+                else{
+                    threatMap[y][i].add(brick);
+                }
+
+            }
+        }
+        else {
+            for (int[] move : brick.getMovePatterns()) {
+                boolean outOfBoard = y + move[0] >= board.length || x + move[1] >= board[0].length || y + move[0] < 0 || x + move[1] < 0;
+                if (outOfBoard) {
+                    continue;
+                }
+                if (threatMap[y + move[0]][x + move[1]] == null) {
+                    threatMap[y + move[0]][x + move[1]] = new LinkedList<>();
+                }
+
+                threatMap[y + move[0]][x + move[1]].add(brick);
+            }
+        }
+
+    }
     @Override
     public Status placeFromTable(Brick brickAtTable, int x, int y) {
         if(board[y][x] != null){
