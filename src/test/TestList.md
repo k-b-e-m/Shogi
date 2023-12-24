@@ -1,4 +1,5 @@
 TestList
+* When the rook is placed the threatmap is updated correctly.
 * When morty is in check he can not move his king into another check
 * When Rick has Morty's king in a checkmate, Rick wins the game.
 * When Ricks's pawn is tried to being placed before a friendly knight, the move is not allowed and gets status "NO_LEGAL_MOVES_AVAILABLE"

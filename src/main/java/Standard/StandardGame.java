@@ -3,9 +3,12 @@ package Standard;
 import Framework.*;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.List.copyOf;
 
 public class StandardGame implements Game {
     private Brick[][] board;
@@ -132,7 +135,14 @@ public class StandardGame implements Game {
     private Status oneInOwnCheckByMovingKing(int[] currentCords, int deltax, int deltay, Brick brick) {
         List<Brick> newThreat = threatMap[currentCords[0]+deltay][currentCords[1]+deltax];
         if(newThreat!=null){
-            return newThreat.stream().filter(b -> b.getPlayer().equals(computeOpponent(brick.getPlayer()))).collect(Collectors.toList()).size() >0 ? Status.PUTS_ONESELF_IN_CHECK:null;
+            board[currentCords[0]][currentCords[1]] = null;
+            for(Brick b: threatMap[currentCords[0]][currentCords[1]]){
+                threatMapUpdater(currentCords[1],currentCords[0],b);
+            }
+            newThreat = threatMap[currentCords[0]+deltay][currentCords[1]+deltax];
+            Status statusForMove = newThreat.stream().filter(b -> b.getPlayer().equals(computeOpponent(brick.getPlayer()))).collect(Collectors.toList()).size() >0 ? Status.PUTS_ONESELF_IN_CHECK:null;
+            board[currentCords[0]][currentCords[1]] = brick;
+            return statusForMove;
         }
         return null;
     }
@@ -142,10 +152,18 @@ public class StandardGame implements Game {
         int y = currentCords[0];
         Brick brickToMove = board[y][x];
         board[y][x] = null;
-        threatMap[y][x].forEach(brick -> threatMapUpdater(x,y,brick));
+        Iterator<Brick> itearator = copyOf(threatMap[y][x]).iterator() ;
+        while(itearator.hasNext()){
+            Brick brick = itearator.next();
+            threatMapUpdater(x,y,brick);
+        }
         boolean kingIsInCheck = getCheck(brickToMove.getPlayer());
         board[y][x] = brickToMove;
-        threatMap[y][x].forEach(brick -> threatMapUpdater(x,y,brick));
+        itearator = copyOf(threatMap[y][x]).iterator();
+        while(itearator.hasNext()){
+            Brick brick = itearator.next();
+            threatMapUpdater(x,y,brick);
+        }
         if(kingIsInCheck){
             return Status.PUTS_ONESELF_IN_CHECK;
         }
@@ -278,6 +296,7 @@ public class StandardGame implements Game {
                     threatMap[i][x] = new LinkedList<>();
                 }
                 if(board[i][x]!= null){
+                    threatMap[i][x].add(brick);
                     break;
                 }
                 else{
@@ -290,6 +309,7 @@ public class StandardGame implements Game {
                     threatMap[i][x] = new LinkedList<>();
                 }
                 if(board[i][x]!= null){
+                    threatMap[i][x].add(brick);
                     break;
                 }
                 else{
@@ -303,10 +323,10 @@ public class StandardGame implements Game {
                     threatMap[y][i] = new LinkedList<>();
                 }
                 if(board[y][i]!= null){
+                    threatMap[y][i].add(brick);threatMap[y][i].add(brick);
                     break;
                 }
                 else{
-                    threatMap[y][i].add(brick);
                 }
 
             }
@@ -315,6 +335,7 @@ public class StandardGame implements Game {
                     threatMap[y][i] = new LinkedList<>();
                 }
                 if(board[y][i]!= null){
+                    threatMap[y][i].add(brick);
                     break;
                 }
                 else{
@@ -374,6 +395,18 @@ public class StandardGame implements Game {
         return enemyIsThreateningKing;
     }
 
+    public void printThreatMap(){
+        for(int i = 0; i< threatMap.length; i++){
+            for(int j = 0; j<threatMap[0].length;j++){
+                if(threatMap[i][j] == null){
+                    System.out.print("  0  ");
+                }else{
+                    System.out.print(threatMap[i][j].size() + " ");
+                }
+            }
+            System.out.println();
+        }
+    }
     public void printBoard(){
         for(int i = 0; i< board.length; i++){
             for(int j = 0; j<board[0].length;j++){

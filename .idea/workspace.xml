@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="6508ab0d-f71a-4197-8d0f-593d0920e8dc" name="Changes" comment="Enabled to place bricks and some status exceptions for this">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Status.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Status.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/TestList.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/TestList.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/TestAlpha.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestAlpha.java" afterDir="false" />
@@ -246,7 +245,7 @@
       <workItem from="1699217762619" duration="1005000" />
       <workItem from="1703190652820" duration="5358000" />
       <workItem from="1703332111084" duration="652000" />
-      <workItem from="1703348961957" duration="7101000" />
+      <workItem from="1703348961957" duration="9657000" />
     </task>
     <task id="LOCAL-00001" summary="First test passed for Alpha">
       <created>1698552056237</created>
@@ -291,5 +290,21 @@
     <MESSAGE value="A brick now have move patterns and connot move out of board" />
     <MESSAGE value="Enabled to place bricks and some status exceptions for this" />
     <option name="LAST_COMMIT_MESSAGE" value="Enabled to place bricks and some status exceptions for this" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestAlpha.java</url>
+          <line>243</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestAlpha.java</url>
+          <line>236</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

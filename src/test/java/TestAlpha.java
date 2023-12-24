@@ -199,9 +199,9 @@ public class TestAlpha {
         game.addBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, 1, 2);
         //When Rick tries to move his pawn to 1,3
         Brick brickToBeMoved = game.getBrickAtBoard(1, 1);
-        Status rickMove = game.moveBrick(brickToBeMoved, 0, 1);
+        Status rickMove = game.moveBrick(brickToBeMoved, 0, 2);
         //Then he gets status MOVE_BLOCKED_BY_PIECE
-        assertThat(game.moveBrick(game.getBrickAtBoard(1, 1), 0, 2), is(Status.MOVE_BLOCKED_BY_PIECE));
+        assertThat(rickMove, is(Status.MOVE_BLOCKED_BY_PIECE));
     }
 
     @Test
@@ -230,16 +230,20 @@ public class TestAlpha {
         assertThat(mortyMove, is(Status.PUTS_ONESELF_IN_CHECK));
     }
 
-/**    @Test
+    @Test
     public void shouldNotAllowMoveKingIntoCheck(){
         //Given a game where morty has a King at 1,1 and rick has a rook at 5,1
         game.addBrick(Player.MORTY, KingPattern, GameConstants.KING, 1, 1);
         game.addBrick(Player.RICK, RookPattern, GameConstants.ROOK, 5, 1);
+        game.printBoard();
+        System.out.println("Threatmap: ");
+        game.printThreatMap();
         //When Morty tries to move his king to 2,1
         Brick brickToBeMoved = game.getBrickAtBoard(1, 1);
+        System.out.println(game.getCheck(Player.MORTY));
         Status mortyMove = game.moveBrick(brickToBeMoved, 1, 0);
         //Then he gets status PUTS_ONESELF_IN_CHECK
         assertThat(mortyMove,is(Status.PUTS_ONESELF_IN_CHECK));
     }
-*/
+
 }
