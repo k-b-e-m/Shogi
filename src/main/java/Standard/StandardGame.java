@@ -124,8 +124,12 @@ public class StandardGame implements Game {
         if(brickType == GameConstants.ROOK){
             return moveCheckerForRook(brick, deltax, deltay, brickType, currentCords);
         }
-
-
+        if(brickType == GameConstants.BISHOP){
+            return moveCheckerForBishop(brick, deltax, deltay, brickType, currentCords);
+        }
+        if(brickType == GameConstants.QUEEN){
+            return moveCheckerForQueen(brick, deltax, deltay);
+        }
 
         //For Checking MovingPattern for other bricks
         Status ok = moveCheckerForBasicPieces(brick, deltax, deltay);
@@ -164,19 +168,7 @@ public class StandardGame implements Game {
         return null;
     }
 
-    private static Status moveCheckerForBasicPieces(Brick brick, int deltax, int deltay) {
-        List<int[]> movePatterns = brick.getMovePatterns();
-        for(int[] movepattern: movePatterns){
-            if(movepattern[0]== deltay && movepattern[1]== deltax){
-                return Status.OK;
-            }
-        }
-        return null;
-    }
-
-
-    private Status moveCheckerForRook(Brick brick, int deltax, int deltay, GameConstants brickType, int[] currentCords) {
-        System.out.println("Rook");
+    private boolean  checkMoveInMovePattern(Brick brick, int deltax, int deltay) {
         boolean mayMove = false;
         List<int[]> movePatterns = brick.getMovePatterns();
         for(int[] movepattern: movePatterns){
@@ -184,6 +176,57 @@ public class StandardGame implements Game {
                 mayMove = true;
             }
         }
+        return mayMove;
+    }
+
+    private Status moveCheckerForBasicPieces(Brick brick, int deltax, int deltay) {
+        return checkMoveInMovePattern(brick,deltax,deltay)? Status.OK : null;
+    }
+
+    private Status moveCheckerForBishop(Brick brick, int deltax, int deltay, GameConstants brickType, int[] currentCords) {
+        if(!checkMoveInMovePattern(brick, deltax, deltay)){
+            return Status.ILLEGAL_MOVE;
+        }
+        // Check positive y and x
+        if(deltax >0 && deltay >0){
+            for(int i = 1; i< deltay; i++){
+                if(board[currentCords[0]+i][currentCords[1]+i]!=null){
+                    return Status.MOVE_BLOCKED_BY_PIECE;
+                }
+            }
+        }
+        //Check negative y and positive x
+        else if(deltax >0 && deltay <0){
+            for(int i = 1; i< deltay; i++){
+                if(board[currentCords[0]-i][currentCords[1]+i]!=null){
+                    return Status.MOVE_BLOCKED_BY_PIECE;
+                }
+            }
+        }
+        //Check positive y and negative x
+        else if(deltax <0 && deltay >0){
+            for(int i = 1; i< deltay; i++){
+                if(board[currentCords[0]+i][currentCords[1]-i]!=null){
+                    return Status.MOVE_BLOCKED_BY_PIECE;
+                }
+            }
+        }
+
+        //check negative y and negative x
+        else if(deltax <0 && deltay <0){
+            for(int i = 1; i< deltay; i++){
+                if(board[currentCords[0]-i][currentCords[1]-i]!=null){
+                    return Status.MOVE_BLOCKED_BY_PIECE;
+                }
+            }
+        }
+
+        return Status.OK;
+    }
+
+
+    private Status moveCheckerForRook(Brick brick, int deltax, int deltay, GameConstants brickType, int[] currentCords) {
+        boolean mayMove = checkMoveInMovePattern(brick, deltax, deltay);
         if(mayMove){
             if(deltay !=0){
                 if(deltay >0){
@@ -219,7 +262,20 @@ public class StandardGame implements Game {
             }
         }
         return Status.OK;
-    } //TODO Consider if refactoring is needed
+    }
+
+    private Status moveCheckerForQueen(Brick brick, int deltax, int deltay) {
+        Status verticalMovement = moveCheckerForRook(brick, deltax, deltay, GameConstants.ROOK, findBrickCords(brick));
+        Status diagonalMovement = moveCheckerForBishop(brick, deltax, deltay, GameConstants.BISHOP, findBrickCords(brick));
+        if(verticalMovement == Status.OK && diagonalMovement == Status.OK){
+            return Status.OK;
+        }
+        else{
+            return Status.MOVE_BLOCKED_BY_PIECE;
+        }
+    }
+
+
 
 
     private Status moveIsOccupiedByFriend(Brick brick, int deltax, int deltay, int[] currentCords) {

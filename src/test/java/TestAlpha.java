@@ -246,4 +246,28 @@ public class TestAlpha {
         assertThat(mortyMove,is(Status.PUTS_ONESELF_IN_CHECK));
     }
 
+    @Test
+    public void shouldNotAllowBishopToMoveThroughBricks(){
+        //Given a game where morty has a bishop at 1,1 and rick has a pawn at 2,2
+        game.addBrick(Player.RICK, BishopPattern, GameConstants.BISHOP, 5, 1);
+        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 6, 2);
+        //When Morty tries to move his bishop to 3,3
+        Brick brickToBeMoved = game.getBrickAtBoard(5, 1);
+        Status mortyMove = game.moveBrick(brickToBeMoved, 2, 2);
+        //Then he gets status MOVE_BLOCKED_BY_PIECE
+        assertThat(mortyMove, is(Status.MOVE_BLOCKED_BY_PIECE));
+    }
+
+    @Test
+    public void shouldNotAllowQueenToMoveThroughObjects(){
+        //Given a game where morty has a queen at 1,1 and rick has a pawn at 2,2
+        game.addBrick(Player.RICK, QueenPattern, GameConstants.QUEEN, 5, 1);
+        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 6, 2);
+        //When Morty tries to move his queen to 3,3
+        Brick brickToBeMoved = game.getBrickAtBoard(5, 1);
+        Status mortyMove = game.moveBrick(brickToBeMoved, 2, 2);
+        //Then he gets status MOVE_BLOCKED_BY_PIECE
+        assertThat(mortyMove, is(Status.MOVE_BLOCKED_BY_PIECE));
+    }
+
 }

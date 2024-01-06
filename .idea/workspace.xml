@@ -7,8 +7,9 @@
     <list default="true" id="6508ab0d-f71a-4197-8d0f-593d0920e8dc" name="Changes" comment="Enabled to place bricks and some status exceptions for this">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Framework/GameConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/GameConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/PredefinedMovepatterns.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/PredefinedMovepatterns.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/TestList.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/TestList.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TestAlpha.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestAlpha.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -246,7 +247,7 @@
       <workItem from="1703190652820" duration="5358000" />
       <workItem from="1703332111084" duration="652000" />
       <workItem from="1703348961957" duration="10907000" />
-      <workItem from="1704571621693" duration="5066000" />
+      <workItem from="1704571621693" duration="7496000" />
     </task>
     <task id="LOCAL-00001" summary="First test passed for Alpha">
       <created>1698552056237</created>
