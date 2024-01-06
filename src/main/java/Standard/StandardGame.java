@@ -58,7 +58,8 @@ public class StandardGame implements Game {
         }
         moveBrickOnBoard(brick, deltax, deltay, currentY, currentX);
         threatMapUpdater(currentX + deltax, currentY + deltay, brick);
-        for(Brick threatingBrick : threatMap[currentY][currentX]){
+        List<Brick> listOfBrickToUpdate = copyOf(threatMap[currentY][currentX]);
+        for(Brick threatingBrick : listOfBrickToUpdate){
             threatMapUpdater(currentX, currentY, threatingBrick);
         }
         return legalMove;
@@ -103,15 +104,13 @@ public class StandardGame implements Game {
         Status field_Occupied_By_Friend = moveIsOccupiedByFriend(brick, deltax, deltay, currentCords);
         if (field_Occupied_By_Friend != null) return field_Occupied_By_Friend;
 
-        //Checking whether king is in check
-        Player player = brick.getPlayer();
-        Status kingInCheck = checkingForCheckMove(brick, deltax, deltay, player, currentCords);
-        if (kingInCheck != null) return kingInCheck;
+
 
         //Check whether move results in putting oneself in check
         if(brick.getType() != GameConstants.KING){
             Status putsOneselfInCheck = oneInOwnCheckByMovingNonKing(currentCords);
             if (putsOneselfInCheck != null) return putsOneselfInCheck;
+
         }
         else{
             Status putsOneselfInCheck = oneInOwnCheckByMovingKing(currentCords, deltax, deltay,brick);
@@ -126,6 +125,8 @@ public class StandardGame implements Game {
             return moveCheckerForRook(brick, deltax, deltay, brickType, currentCords);
         }
 
+
+
         //For Checking MovingPattern for other bricks
         Status ok = moveCheckerForBasicPieces(brick, deltax, deltay);
         if (ok != null) return ok;
@@ -133,16 +134,9 @@ public class StandardGame implements Game {
     }
 
     private Status oneInOwnCheckByMovingKing(int[] currentCords, int deltax, int deltay, Brick brick) {
-        List<Brick> newThreat = threatMap[currentCords[0]+deltay][currentCords[1]+deltax];
-        if(newThreat!=null){
-            board[currentCords[0]][currentCords[1]] = null;
-            for(Brick b: threatMap[currentCords[0]][currentCords[1]]){
-                threatMapUpdater(currentCords[1],currentCords[0],b);
-            }
-            newThreat = threatMap[currentCords[0]+deltay][currentCords[1]+deltax];
-            Status statusForMove = newThreat.stream().filter(b -> b.getPlayer().equals(computeOpponent(brick.getPlayer()))).collect(Collectors.toList()).size() >0 ? Status.PUTS_ONESELF_IN_CHECK:null;
-            board[currentCords[0]][currentCords[1]] = brick;
-            return statusForMove;
+        boolean spotIsThreatened = threatMap[currentCords[0]+deltay][currentCords[1]+deltax].stream().filter(b -> b.getPlayer() == computeOpponent(brick.getPlayer())).count()>0;
+        if(spotIsThreatened){
+            return Status.PUTS_ONESELF_IN_CHECK;
         }
         return null;
     }
@@ -227,28 +221,6 @@ public class StandardGame implements Game {
         return Status.OK;
     } //TODO Consider if refactoring is needed
 
-    private Status checkingForCheckMove(Brick brick, int deltax, int deltay, Player player, int[] currentCords) {
-        boolean kingIsInCheck = getCheck(player);
-        if(kingIsInCheck){
-            boolean newMoveisInOfCheck = false;
-            boolean brickIsKing = brick.getType() == GameConstants.KING;
-            if(brickIsKing) {
-                newMoveisInOfCheck = threatMap[currentCords[0] + deltay][currentCords[1] + deltax].stream().map(brick1 -> brick1.getPlayer()).collect(java.util.stream.Collectors.toList()).contains(computeOpponent(player));
-            }
-            else{
-                Brick king = kings.get(player);
-                int[] kingCords = findBrickCords(king);
-                int kingX = kingCords[1];
-                int kingY = kingCords[0];
-                newMoveisInOfCheck = threatMap[kingY][kingX].stream().map(brick1 -> brick1.getPlayer()).collect(java.util.stream.Collectors.toList()).contains(computeOpponent(player));
-
-            }
-            if(newMoveisInOfCheck){
-                return Status.KING_IN_CHECK;
-            }
-        }
-        return null;
-    }
 
     private Status moveIsOccupiedByFriend(Brick brick, int deltax, int deltay, int[] currentCords) {
         if(board[currentCords[0]+ deltay][currentCords[1]+ deltax]!=null){
@@ -291,58 +263,48 @@ public class StandardGame implements Game {
         }
         //Add the new threat for brick
         if (brick.getType() == GameConstants.ROOK) {
-            for(int i = y; i< board.length; i++){
-                if(threatMap[i][x] == null){
-                    threatMap[i][x] = new LinkedList<>();
+            //for the positive Y axis
+            for(int i = 1; i+y< board.length;i++){
+                if(threatMap[y+i][x] == null){
+                    threatMap[y+i][x] = new LinkedList<>();
                 }
-                if(board[i][x]!= null){
-                    threatMap[i][x].add(brick);
+                threatMap[y+i][x].add(brick);
+                if(board[y+i][x] != null){
                     break;
                 }
-                else{
-                    threatMap[i][x].add(brick);
-                }
-
             }
-            for(int i = y-1; i> -1; i--){
-                if(threatMap[i][x] == null){
-                    threatMap[i][x] = new LinkedList<>();
+            //for the negative Y axis
+            for(int i = 1; y-i> 0;i++){
+                if(threatMap[y-i][x] == null){
+                    threatMap[y-i][x] = new LinkedList<>();
                 }
-                if(board[i][x]!= null){
-                    threatMap[i][x].add(brick);
+                threatMap[y-i][x].add(brick);
+                if(board[y-i][x] != null){
                     break;
                 }
-                else{
-                    threatMap[i][x].add(brick);
-                }
-
             }
-
-            for(int i = x; i< board.length; i++){
-                if(threatMap[y][i] == null){
-                    threatMap[y][i] = new LinkedList<>();
+            //for the positive X axis
+            for(int i = 1; i+x< board.length;i++){
+                if(threatMap[y][x+i] == null){
+                    threatMap[y][x+i] = new LinkedList<>();
                 }
-                if(board[y][i]!= null){
-                    threatMap[y][i].add(brick);threatMap[y][i].add(brick);
+                threatMap[y][x+i].add(brick);
+                if(board[y][x+i] != null){
                     break;
                 }
-                else{
-                }
-
             }
-            for(int i = x-1; i< -1; i--){
-                if(threatMap[y][i] == null){
-                    threatMap[y][i] = new LinkedList<>();
+            //for the negative X axis
+            for(int i = 1; x-i> 0;i++){
+                if(threatMap[y][x-i] == null){
+                    threatMap[y][x-i] = new LinkedList<>();
                 }
-                if(board[y][i]!= null){
-                    threatMap[y][i].add(brick);
+                threatMap[y][x-i].add(brick);
+
+                if(board[y][x-i] != null){
                     break;
                 }
-                else{
-                    threatMap[y][i].add(brick);
-                }
-
             }
+
         }
         else {
             for (int[] move : brick.getMovePatterns()) {

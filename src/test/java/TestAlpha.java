@@ -168,7 +168,7 @@ public class TestAlpha {
     }
 
     @Test
-    public void shouldGiveStatus_KING_IN_CHECK_WhenKingIsInCheckAndHasAPossibleMove() {
+    public void shouldGiveStatus_PUTS_ONESELF_IN_CHECK_WhenKingIsInCheckAndHasAPossibleMove() {
         //Given a game where morty is in check and it is his turn
         game.addBrick(Player.MORTY, KingPattern, GameConstants.KING, 1, 5);
         game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 4);
@@ -177,7 +177,7 @@ public class TestAlpha {
         Brick brickToBeMoved = game.getBrickAtBoard(4, 4);
         Status mortyMove = game.moveBrick(brickToBeMoved, 0, 1);
         //Then he gets status KING_IN_CHECK
-        assertThat(mortyMove, is(Status.KING_IN_CHECK));
+        assertThat(mortyMove, is(Status.PUTS_ONESELF_IN_CHECK));
     }
 
     @Test
