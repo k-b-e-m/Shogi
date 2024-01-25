@@ -1,6 +1,4 @@
 TestList
-* When a queen is placed the threatmap is updated correctly.
-* When a bishop is placed the threatmap is updated correctly.
 * When Rick has Morty's king in a checkmate, Rick wins the game.
 * When Ricks's pawn is tried to being placed before a friendly knight, the move is not allowed and gets status "NO_LEGAL_MOVES_AVAILABLE"
 * When Ricks's pawn is tried to be placed before the edge of the board, the move is not allowed and gets status "NO_LEGAL_MOVES_AVAILABLE"
@@ -13,6 +11,8 @@ TestList
 
   **Done**
 
+* [OK] When a queen is placed the threatmap is updated correctly.
+* [OK] When a bishop is placed the threatmap is updated correctly.
 * [OK] A bishop cannot move through pieces
 * [OK] A queen cannot move through pieces
 * [OK] When the rook is placed the threatmap is updated correctly.

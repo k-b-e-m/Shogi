@@ -10,6 +10,7 @@ import static Framework.PredefinedMovepatterns.*;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -151,7 +152,6 @@ public class TestAlpha {
         //When Checking if morty is in check
         boolean mortyCheck = game.getCheck(Player.MORTY);
         //Then it is true
-        game.printBoard();
         assertThat(mortyCheck, is(true));
     }
 
@@ -235,12 +235,8 @@ public class TestAlpha {
         //Given a game where morty has a King at 1,1 and rick has a rook at 5,1
         game.addBrick(Player.MORTY, KingPattern, GameConstants.KING, 1, 1);
         game.addBrick(Player.RICK, RookPattern, GameConstants.ROOK, 5, 1);
-        game.printBoard();
-        System.out.println("Threatmap: ");
-        game.printThreatMap();
         //When Morty tries to move his king to 2,1
         Brick brickToBeMoved = game.getBrickAtBoard(1, 1);
-        System.out.println(game.getCheck(Player.MORTY));
         Status mortyMove = game.moveBrick(brickToBeMoved, 1, 0);
         //Then he gets status PUTS_ONESELF_IN_CHECK
         assertThat(mortyMove,is(Status.PUTS_ONESELF_IN_CHECK));
@@ -268,6 +264,75 @@ public class TestAlpha {
         Status mortyMove = game.moveBrick(brickToBeMoved, 2, 2);
         //Then he gets status MOVE_BLOCKED_BY_PIECE
         assertThat(mortyMove, is(Status.MOVE_BLOCKED_BY_PIECE));
+    }
+
+    @Test
+    public void shouldHaveBishopAtCorrectThreatMap(){
+        //Given a bishop at 5,5
+        game.addBrick(Player.RICK, BishopPattern, GameConstants.BISHOP, 5, 5);
+        //When checking the threat map at 6,6 it should be true
+        boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
+        boolean threatAt44 = game.getThreatMap()[4][4].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
+        boolean threatAt64 = game.getThreatMap()[6][4].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
+        boolean threatAt46 = game.getThreatMap()[4][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
+        assertThat(threatAt66, is(true));
+        assertThat(threatAt44, is(true));
+        assertThat(threatAt64, is(true));
+        assertThat(threatAt46, is(true));
+    }
+
+    @Test
+    public void shouldHaveBishopAtCorrectThreatMapWhenPawnIsInWay(){
+        //Given a bishop at 5,5 and a pawn at 6,6
+        game.addBrick(Player.RICK, BishopPattern, GameConstants.BISHOP, 5, 5);
+        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 6, 6);
+        //When checking the threat map at 6,6 it should be true
+        boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
+        boolean threatAt77 = game.getThreatMap()[7][7].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
+        game.printBoard();
+        System.out.println("");
+        game.printThreatMap();
+        assertThat(threatAt66, is(true));
+        assertThat(threatAt77, is(false));
+    }
+    @Test
+    public void shouldUpdateThreatMapForQueenCorrect(){
+        //Given a queen at 5,5
+        game.addBrick(Player.RICK, QueenPattern, GameConstants.QUEEN, 5, 5);
+        //When checking the threat map around the queen
+        boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        boolean threatAt44 = game.getThreatMap()[4][4].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        boolean threatAt64 = game.getThreatMap()[6][4].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        boolean threatAt46 = game.getThreatMap()[4][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        boolean threatAt54 = game.getThreatMap()[5][4].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        boolean threatAt56 = game.getThreatMap()[5][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        boolean threatAt45 = game.getThreatMap()[4][5].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        boolean threatAt65 = game.getThreatMap()[6][5].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        //Then it should be true
+        assertThat(threatAt66, is(true));
+        assertThat(threatAt44, is(true));
+        assertThat(threatAt64, is(true));
+        assertThat(threatAt46, is(true));
+        assertThat(threatAt54, is(true));
+        assertThat(threatAt56, is(true));
+        assertThat(threatAt45, is(true));
+        assertThat(threatAt65, is(true));
+    }
+    @Test
+    public void shouldUpdateThreatMapCorrectWhenPawnIsInWayForQueen(){
+        //Given a queen at 5,5 and a pawn at 6,6 and at 5,6
+        game.addBrick(Player.RICK, QueenPattern, GameConstants.QUEEN, 5, 5);
+        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 6, 6);
+        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 5, 6);
+        game.printThreatMap();
+        //When checking the threat map around the queen
+        boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        boolean threatAt77 = game.getThreatMap()[7][7].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        boolean threatAt57 = game.getThreatMap()[5][7].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        //Then it should have updated correctly
+        assertThat(threatAt66, is(true));
+        assertThat(threatAt77, is(false));
+        assertThat(threatAt57, is(false));
     }
 
 }

@@ -2,24 +2,21 @@ package Standard;
 
 import Framework.*;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.List.copyOf;
 
 public class StandardGame implements Game {
     private Brick[][] board;
-    private List<Brick>[][] threatMap;
+    private Set<Brick>[][] threatMap;
     private HashMap<Player,List<Brick>> table;
     //Currently only implements one king at a time.
     private HashMap<Player,Brick> kings;
 
     public StandardGame() {
         this.board = new Brick[9][9];
-        this.threatMap = new LinkedList[9][9];
+        this.threatMap = new HashSet[9][9];
         table = new HashMap<>();
         kings = new HashMap<>();
         table.put(Player.RICK,new LinkedList<Brick>());
@@ -302,14 +299,22 @@ public class StandardGame implements Game {
         if(newBrickIsKing){
             kings.put(newBrick.getPlayer(),newBrick);
         }
+        //Update for bricks affected by placement of new brick
+        if(threatMap[y][x]!= null){
+            List<Brick> listOfBrickToUpdate = copyOf(threatMap[y][x]);
+            for(Brick threatingBrick : listOfBrickToUpdate){
+                threatMapUpdater(x,y,threatingBrick);
+            }
+        }
+
         threatMapUpdater(x, y, newBrick);
     }
 
     private void threatMapUpdater(int x, int y, Brick brick) {
         if(threatMap[y][x] == null){
-            threatMap[y][x] = new LinkedList<>();
+            threatMap[y][x] = new HashSet<>();
         }
-        //Clear for previous threts by brick
+        //Clear for previous threats by brick
         for(int i = 0; i< threatMap.length; i++){
             for(int j = 0; j<threatMap[0].length;j++){
                 if(threatMap[i][j]!= null){
@@ -319,57 +324,24 @@ public class StandardGame implements Game {
         }
         //Add the new threat for brick
         if (brick.getType() == GameConstants.ROOK) {
-            //for the positive Y axis
-            for(int i = 1; i+y< board.length;i++){
-                if(threatMap[y+i][x] == null){
-                    threatMap[y+i][x] = new LinkedList<>();
-                }
-                threatMap[y+i][x].add(brick);
-                if(board[y+i][x] != null){
-                    break;
-                }
-            }
-            //for the negative Y axis
-            for(int i = 1; y-i> 0;i++){
-                if(threatMap[y-i][x] == null){
-                    threatMap[y-i][x] = new LinkedList<>();
-                }
-                threatMap[y-i][x].add(brick);
-                if(board[y-i][x] != null){
-                    break;
-                }
-            }
-            //for the positive X axis
-            for(int i = 1; i+x< board.length;i++){
-                if(threatMap[y][x+i] == null){
-                    threatMap[y][x+i] = new LinkedList<>();
-                }
-                threatMap[y][x+i].add(brick);
-                if(board[y][x+i] != null){
-                    break;
-                }
-            }
-            //for the negative X axis
-            for(int i = 1; x-i> 0;i++){
-                if(threatMap[y][x-i] == null){
-                    threatMap[y][x-i] = new LinkedList<>();
-                }
-                threatMap[y][x-i].add(brick);
-
-                if(board[y][x-i] != null){
-                    break;
-                }
-            }
+            rookThreatMap(x, y, brick);
 
         }
-        else {
+        else if (brick.getType() == GameConstants.BISHOP){
+            bishopThreatMap(x, y, brick);
+
+        }
+        else if (brick.getType() == GameConstants.QUEEN) {
+            rookThreatMap(x, y, brick);
+            bishopThreatMap(x, y, brick);
+        } else {
             for (int[] move : brick.getMovePatterns()) {
                 boolean outOfBoard = y + move[0] >= board.length || x + move[1] >= board[0].length || y + move[0] < 0 || x + move[1] < 0;
                 if (outOfBoard) {
                     continue;
                 }
                 if (threatMap[y + move[0]][x + move[1]] == null) {
-                    threatMap[y + move[0]][x + move[1]] = new LinkedList<>();
+                    threatMap[y + move[0]][x + move[1]] = new HashSet<>();
                 }
 
                 threatMap[y + move[0]][x + move[1]].add(brick);
@@ -377,6 +349,95 @@ public class StandardGame implements Game {
         }
 
     }
+
+    private void rookThreatMap(int x, int y, Brick brick) {
+        //for the positive Y axis
+        for(int i = 1; i+ y < board.length; i++){
+            if(threatMap[y +i][x] == null){
+                threatMap[y +i][x] = new HashSet<>();
+            }
+            threatMap[y +i][x].add(brick);
+            if(board[y +i][x] != null){
+                break;
+            }
+        }
+        //for the negative Y axis
+        for(int i = 1; y -i> 0; i++){
+            if(threatMap[y -i][x] == null){
+                threatMap[y -i][x] = new HashSet<>();
+            }
+            threatMap[y -i][x].add(brick);
+            if(board[y -i][x] != null){
+                break;
+            }
+        }
+        //for the positive X axis
+        for(int i = 1; i+ x < board.length; i++){
+            if(threatMap[y][x +i] == null){
+                threatMap[y][x +i] = new HashSet<>();
+            }
+            threatMap[y][x +i].add(brick);
+            if(board[y][x +i] != null){
+                break;
+            }
+        }
+        //for the negative X axis
+        for(int i = 1; x -i> 0; i++){
+            if(threatMap[y][x -i] == null){
+                threatMap[y][x -i] = new HashSet<>();
+            }
+            threatMap[y][x -i].add(brick);
+
+            if(board[y][x -i] != null){
+                break;
+            }
+        }
+    }
+
+    private void bishopThreatMap(int x, int y, Brick brick) {
+        //For the positive Y and X axis
+        for(int i = 0; i+ y < board.length && i+ x < board[0].length; i++){
+            if(threatMap[y +i][x +i] == null){
+                threatMap[y +i][x +i] = new HashSet<>();
+            }
+            threatMap[y +i][x +i].add(brick);
+            if(board[y +i][x +i] != null && board[y +i][x +i] != brick){
+                break;
+            }
+        }
+        //For the positive Y and negative X axis
+        for(int i = 0; i+ y < board.length && x -i>= 0; i++){
+            if(threatMap[y +i][x -i] == null){
+                threatMap[y +i][x -i] = new HashSet<>();
+            }
+            threatMap[y +i][x -i].add(brick);
+            if(board[y +i][x -i] != null && board[y +i][x -i] != brick){
+                break;
+            }
+        }
+        //For the negative Y and negative X axis
+        for(int i = 0; y -i>= 0 && x -i>= 0; i++){
+            if(threatMap[y -i][x -i] == null){
+                threatMap[y -i][x -i] = new HashSet<>();
+            }
+            threatMap[y -i][x -i].add(brick);
+            if(board[y -i][x -i] != null && board[y -i][x -i] != brick){
+                break;
+            }
+        }
+        //For the negative Y and positive X axis
+        for(int i = 0; y -i>= 0 && x +i<board.length; i++){
+            int test = x +i;
+            if(threatMap[y -i][x +i] == null){
+                threatMap[y -i][x +i] = new HashSet<>();
+            }
+            threatMap[y -i][x +i].add(brick);
+            if(board[y -i][x +i] != null && board[y -i][x +i] != brick){
+                break;
+            }
+        }
+    }
+
     @Override
     public Status placeFromTable(Brick brickAtTable, int x, int y) {
         if(board[y][x] != null){
@@ -400,6 +461,10 @@ public class StandardGame implements Game {
         return Status.OK;
     }
 
+    public Set<Brick>[][] getThreatMap() {
+        return threatMap;
+    }
+
     @Override
     public boolean getCheck(Player player) {
         //For games where no king is present
@@ -409,17 +474,25 @@ public class StandardGame implements Game {
         int[] kingCords = findBrickCords(kings.get(player));
         int kingX = kingCords[1];
         int kingY = kingCords[0];
-        boolean enemyIsThreateningKing = 0 != threatMap[kingY][kingX].stream().map(brick -> brick.getPlayer()).count();
+        boolean enemyIsThreateningKing = 0 != threatMap[kingY][kingX].stream().map(brick -> brick.getPlayer()).filter(p -> ! p.equals(player)).count();
         return enemyIsThreateningKing;
     }
 
     public void printThreatMap(){
         for(int i = 0; i< threatMap.length; i++){
             for(int j = 0; j<threatMap[0].length;j++){
+                String color = "\u001B[0m";
+                if(board[i][j]!= null){
+                    if(board[i][j].getType()== GameConstants.BISHOP){
+                        color = "\u001B[34m";}
+                    else {
+                        color = "\u001B[31m";
+                    }
+                }
                 if(threatMap[i][j] == null){
-                    System.out.print("  0  ");
+                    System.out.print(color + "  0  ");
                 }else{
-                    System.out.print(threatMap[i][j].size() + " ");
+                    System.out.print(color + "  " + threatMap[i][j].size() + "  ");
                 }
             }
             System.out.println();
