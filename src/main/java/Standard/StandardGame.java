@@ -14,6 +14,9 @@ public class StandardGame implements Game {
     //Currently only implements one king at a time.
     private HashMap<Player,Brick> kings;
 
+    /**
+     * Constructor for StandardGame
+     */
     public StandardGame() {
         this.board = new Brick[9][9];
         this.threatMap = new HashSet[9][9];
@@ -23,26 +26,53 @@ public class StandardGame implements Game {
         table.put(Player.MORTY,new LinkedList<Brick>());
     }
 
+    /**
+     * Method for getting the board
+     * @return Brick[][], representing the board
+     */
     @Override
     public Brick[][] getBoard() {
         return new Brick[0][];
     }
 
+    /**
+     * Method for getting brick at position
+     * @param x int representing x coordinate
+     * @param y int representing y cooridnate
+     * @return Brick, Brick at position
+     */
     @Override
     public Brick getBrickAtBoard(int x, int y) {
         return board[y][x];
     }
 
+    /**
+     * Method for getting bricks at table
+     * @param who Player representing player
+     * @return List<Brick>, list of bricks at table
+     */
     @Override
     public List<Brick> getBricksAtTable(Player who) {
         return table.get(Player.RICK);
     }
 
+    /**
+     * Method for getting brick at position
+     * @param index int representing index of brick
+     * @return Brick, Brick at position
+     */
     @Override
     public Brick getBrickAtTable(int index) {
         return table.get(Player.RICK).get(index);
     }
 
+    /**
+     * Method for moving a brick
+     * @param brick Brick to move
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @return Status representing status of move
+     */
     @Override
     public Status moveBrick(Brick brick, int deltax, int deltay) {
 
@@ -50,34 +80,77 @@ public class StandardGame implements Game {
         int currentY =currentCords[0];
         int currentX = currentCords[1];
         Status legalMove = legalMove(brick,deltax,deltay);
-        if(!(legalMove == Status.OK)){
+        boolean moveIsOkay = legalMove == Status.OK;
+        if(!moveIsOkay){
             return legalMove;
         }
         moveBrickOnBoard(brick, deltax, deltay, currentY, currentX);
         threatMapUpdater(currentX + deltax, currentY + deltay, brick);
+        threatMapUpdaterForBrickAtPosition(currentY, currentX);
+        return legalMove;
+    }
+
+    private void threatMapUpdaterForBrickAtPosition(int currentY, int currentX) {
         List<Brick> listOfBrickToUpdate = copyOf(threatMap[currentY][currentX]);
         for(Brick threatingBrick : listOfBrickToUpdate){
             threatMapUpdater(currentX, currentY, threatingBrick);
         }
-        return legalMove;
     }
 
+    /**
+     * Method for moving a brick
+     * @param brick Brick to move
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @param currentY int representing current y position of brick
+     * @param currentX int representing current x position of brick
+     */
     private void moveBrickOnBoard(Brick brick, int deltax, int deltay, int currentY, int currentX) {
-        if(brick.getPlayer() == Player.MORTY){
+        boolean mortyOwnsBrick = brick.getPlayer() == Player.MORTY;
+        if(mortyOwnsBrick){
             deltax = -deltax;
             deltay = -deltay;
         }
-        board[currentY][currentX] = null;
-        if(board[currentY + deltay][currentX + deltax] != null){
-
-            Player ownerOfBrickMoved = brick.getPlayer();
-            GameConstants typeOfBrickKilled = board[currentY + deltay][currentX + deltax].getType();
-            List<int[]> movePatternOfBrickKilled = brick.getMovePatterns();
-            table.get(ownerOfBrickMoved).add(new StandardBrick(ownerOfBrickMoved, movePatternOfBrickKilled,typeOfBrickKilled));
+        boolean boardAtSpotIsOccupied = board[currentY + deltay][currentX + deltax] != null;
+        if(boardAtSpotIsOccupied){
+            killABrick(brick, deltax, deltay, currentY, currentX);
         }
+        movingOfBrick(brick, deltax, deltay, currentY, currentX);
+    }
+
+    /**
+     * Method for moving a brick
+     * @param brick Brick to move
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @param currentY int representing current y position of brick
+     * @param currentX int representing current x position of brick
+     */
+    private void movingOfBrick(Brick brick, int deltax, int deltay, int currentY, int currentX) {
+        board[currentY][currentX] = null;
         board[currentY + deltay][currentX + deltax] = brick;
     }
 
+    /**
+     * Method for killing a brick
+     * @param brick Brick to kill
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @param currentY int representing current y position of brick
+     * @param currentX int representing current x position of brick
+     */
+    private void killABrick(Brick brick, int deltax, int deltay, int currentY, int currentX) {
+        Player ownerOfBrickMoved = brick.getPlayer();
+        GameConstants typeOfBrickKilled = board[currentY + deltay][currentX + deltax].getType();
+        List<int[]> movePatternOfBrickKilled = brick.getMovePatterns();
+        table.get(ownerOfBrickMoved).add(new StandardBrick(ownerOfBrickMoved, movePatternOfBrickKilled,typeOfBrickKilled));
+    }
+
+    /**
+     * Method for finding the coordinates of a brick
+     * @param brick Brick to find coordinates of
+     * @return int[], representing coordinates of brick
+     */
     private int[] findBrickCords(Brick brick) {
         int[] currentCoords = new int[2];
         for(int xi = 0; xi< board[0].length;xi++){
@@ -91,20 +164,30 @@ public class StandardGame implements Game {
         return currentCoords;
     }
 
+    /**
+     * Method for checking whether a move is legal
+     * @param brick Brick to move
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @return Status representing status of move
+     */
     private Status legalMove(Brick brick, int deltax, int deltay) {
         //Checking whether the move is withing the board
         int[] currentCords = findBrickCords(brick);
         Status outOfBoardMove = moveIsOutOfBoard(deltax, deltay, currentCords);
-        if(outOfBoardMove != null) return outOfBoardMove;
+        boolean insideBoard = outOfBoardMove == null;
+        if(!insideBoard) return outOfBoardMove;
 
         //Checking whether the move is to a field occupied by a friend
         Status field_Occupied_By_Friend = moveIsOccupiedByFriend(brick, deltax, deltay, currentCords);
-        if (field_Occupied_By_Friend != null) return field_Occupied_By_Friend;
+        boolean isOccupiedByFriend = field_Occupied_By_Friend != null;
+        if (isOccupiedByFriend) return field_Occupied_By_Friend;
 
 
 
         //Check whether move results in putting oneself in check
-        if(brick.getType() != GameConstants.KING){
+        boolean brickIsKing = brick.getType() == GameConstants.KING;
+        if(!brickIsKing){
             Status putsOneselfInCheck = oneInOwnCheckByMovingNonKing(currentCords);
             if (putsOneselfInCheck != null) return putsOneselfInCheck;
 
@@ -118,22 +201,34 @@ public class StandardGame implements Game {
         //Movepattern Checks
         GameConstants brickType = brick.getType();
         //For Rook
-        if(brickType == GameConstants.ROOK){
+        boolean brickIsRook = brickType == GameConstants.ROOK;
+        if(brickIsRook){
             return moveCheckerForRook(brick, deltax, deltay, brickType, currentCords);
         }
-        if(brickType == GameConstants.BISHOP){
+        boolean brickIsBishop = brickType == GameConstants.BISHOP;
+        if(brickIsBishop){
             return moveCheckerForBishop(brick, deltax, deltay, brickType, currentCords);
         }
-        if(brickType == GameConstants.QUEEN){
+        boolean brickIsQueen = brickType == GameConstants.QUEEN;
+        if(brickIsQueen){
             return moveCheckerForQueen(brick, deltax, deltay);
         }
 
         //For Checking MovingPattern for other bricks
         Status ok = moveCheckerForBasicPieces(brick, deltax, deltay);
-        if (ok != null) return ok;
+        boolean moveIsInMoveSet = ok == null;
+        if (!moveIsInMoveSet) return ok;
         return Status.ILLEGAL_MOVE;
     }
 
+    /**
+     * Method for checking whether a move results in putting oneself in check
+     * @param currentCords int[] representing current coordinates of brick
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @param brick Brick to move
+     * @return Status representing status of move
+     */
     private Status oneInOwnCheckByMovingKing(int[] currentCords, int deltax, int deltay, Brick brick) {
         boolean spotIsThreatened = threatMap[currentCords[0]+deltay][currentCords[1]+deltax].stream().filter(b -> b.getPlayer() == computeOpponent(brick.getPlayer())).count()>0;
         if(spotIsThreatened){
@@ -142,6 +237,11 @@ public class StandardGame implements Game {
         return null;
     }
 
+    /**
+     * Method for checking whether a move results in putting oneself in check
+     * @param currentCords int[] representing current coordinates of brick
+     * @return Status representing status of move
+     */
     private Status oneInOwnCheckByMovingNonKing(int[] currentCords) {
         int x = currentCords[1];
         int y = currentCords[0];
@@ -165,6 +265,13 @@ public class StandardGame implements Game {
         return null;
     }
 
+    /**
+     * Method for checking whether a move is in the move pattern of a brick
+     * @param brick Brick to move
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @return boolean representing whether move is in move pattern
+     */
     private boolean  checkMoveInMovePattern(Brick brick, int deltax, int deltay) {
         boolean mayMove = false;
         List<int[]> movePatterns = brick.getMovePatterns();
@@ -176,10 +283,27 @@ public class StandardGame implements Game {
         return mayMove;
     }
 
+
+    /**
+     * Method for checking whether a move is in the move pattern of a brick
+     * @param brick Brick to move
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @return Status representing status of move
+     */
     private Status moveCheckerForBasicPieces(Brick brick, int deltax, int deltay) {
         return checkMoveInMovePattern(brick,deltax,deltay)? Status.OK : null;
     }
 
+    /**
+     * Method for checking whether a move is in the move pattern of a brick
+     * @param brick Brick to move
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @param brickType GameConstants representing type of brick
+     * @param currentCords int[] representing current coordinates of brick
+     * @return Status representing status of move
+     */
     private Status moveCheckerForBishop(Brick brick, int deltax, int deltay, GameConstants brickType, int[] currentCords) {
         if(!checkMoveInMovePattern(brick, deltax, deltay)){
             return Status.ILLEGAL_MOVE;
@@ -221,7 +345,15 @@ public class StandardGame implements Game {
         return Status.OK;
     }
 
-
+    /**
+     * Method for checking whether a move is in the move pattern of a brick
+     * @param brick Brick to move
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @param brickType GameConstants representing type of brick
+     * @param currentCords int[] representing current coordinates of brick
+     * @return Status representing status of move
+     */
     private Status moveCheckerForRook(Brick brick, int deltax, int deltay, GameConstants brickType, int[] currentCords) {
         boolean mayMove = checkMoveInMovePattern(brick, deltax, deltay);
         if(mayMove){
@@ -261,6 +393,13 @@ public class StandardGame implements Game {
         return Status.OK;
     }
 
+    /**
+     * Method for checking whether a move is in the move pattern of a brick
+     * @param brick Brick to move
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @return Status representing status of move
+     */
     private Status moveCheckerForQueen(Brick brick, int deltax, int deltay) {
         Status verticalMovement = moveCheckerForRook(brick, deltax, deltay, GameConstants.ROOK, findBrickCords(brick));
         Status diagonalMovement = moveCheckerForBishop(brick, deltax, deltay, GameConstants.BISHOP, findBrickCords(brick));
@@ -274,7 +413,14 @@ public class StandardGame implements Game {
 
 
 
-
+    /**
+     * Method for checking whether a move is in the move pattern of a brick
+     * @param brick Brick to move
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @param currentCords int[] representing current coordinates of brick
+     * @return Status representing status of move
+     */
     private Status moveIsOccupiedByFriend(Brick brick, int deltax, int deltay, int[] currentCords) {
         if(board[currentCords[0]+ deltay][currentCords[1]+ deltax]!=null){
             if(board[currentCords[0]+ deltay][currentCords[1]+ deltax].getPlayer().equals(brick.getPlayer())){
@@ -284,6 +430,13 @@ public class StandardGame implements Game {
         return null;
     }
 
+    /**
+     * Method for checking whether a move is in the move pattern of a brick
+     * @param deltax int representing x value to move
+     * @param deltay int representing y value to move
+     * @param currentCords int[] representing current coordinates of brick
+     * @return Status representing status of move
+     */
     private static Status moveIsOutOfBoard(int deltax, int deltay, int[] currentCords) {
         if(currentCords[0]+ deltay > 8 || currentCords[1]+ deltax >8){
             return Status.OUT_OF_BOARD_MOVE;
@@ -291,6 +444,12 @@ public class StandardGame implements Game {
         return null;
     }
 
+    /**
+     * Method for adding a brick to the table
+     * @param owner Player representing owner of brick
+     * @param movePattern List<int[]> representing move pattern of brick
+     * @param typeOfBrick GameConstants representing type of brick
+     */
     @Override
     public void addBrick(Player owner, List<int[]> movePattern, GameConstants typeOfBrick, int x, int y) {
         Brick newBrick = new StandardBrick(owner,movePattern,typeOfBrick);
@@ -301,15 +460,18 @@ public class StandardGame implements Game {
         }
         //Update for bricks affected by placement of new brick
         if(threatMap[y][x]!= null){
-            List<Brick> listOfBrickToUpdate = copyOf(threatMap[y][x]);
-            for(Brick threatingBrick : listOfBrickToUpdate){
-                threatMapUpdater(x,y,threatingBrick);
-            }
+            threatMapUpdaterForBrickAtPosition(y, x);
         }
 
         threatMapUpdater(x, y, newBrick);
     }
 
+    /**
+     * Method for updating the threat map
+     * @param x int representing x coordinate of brick
+     * @param y int representing y coordinate of brick
+     * @param brick Brick representing brick
+     */
     private void threatMapUpdater(int x, int y, Brick brick) {
         if(threatMap[y][x] == null){
             threatMap[y][x] = new HashSet<>();
@@ -349,7 +511,12 @@ public class StandardGame implements Game {
         }
 
     }
-
+    /**
+     * Method for updating the threat map
+     * @param x int representing x coordinate of brick
+     * @param y int representing y coordinate of brick
+     * @param brick Brick representing brick
+     */
     private void rookThreatMap(int x, int y, Brick brick) {
         //for the positive Y axis
         for(int i = 1; i+ y < board.length; i++){
@@ -393,7 +560,12 @@ public class StandardGame implements Game {
             }
         }
     }
-
+    /**
+     * Method for updating the threat map
+     * @param x int representing x coordinate of brick
+     * @param y int representing y coordinate of brick
+     * @param brick Brick representing brick
+     */
     private void bishopThreatMap(int x, int y, Brick brick) {
         //For the positive Y and X axis
         for(int i = 0; i+ y < board.length && i+ x < board[0].length; i++){
@@ -437,7 +609,13 @@ public class StandardGame implements Game {
             }
         }
     }
-
+    /**
+     * Method for placing a brick from the table
+     * @param brickAtTable Brick representing brick at table
+     * @param x int representing x position of where to place brick
+     * @param y int representing y position of where to place brick
+     * @return Status representing status of placement
+     */
     @Override
     public Status placeFromTable(Brick brickAtTable, int x, int y) {
         if(board[y][x] != null){
@@ -460,11 +638,17 @@ public class StandardGame implements Game {
         table.get(playerOwningBrick).remove(brickAtTable);
         return Status.OK;
     }
-
+    /**
+     * Method for getting the threat map
+     * @return Set<Brick>[][], representing the threat map
+     */
     public Set<Brick>[][] getThreatMap() {
         return threatMap;
     }
-
+    /**
+     * Method for getting the threat map
+     * @return Set<Brick>[][], representing the threat map
+     */
     @Override
     public boolean getCheck(Player player) {
         //For games where no king is present
@@ -477,7 +661,9 @@ public class StandardGame implements Game {
         boolean enemyIsThreateningKing = 0 != threatMap[kingY][kingX].stream().map(brick -> brick.getPlayer()).filter(p -> ! p.equals(player)).count();
         return enemyIsThreateningKing;
     }
-
+    /**
+     * Method for printing threatMap
+     */
     public void printThreatMap(){
         for(int i = 0; i< threatMap.length; i++){
             for(int j = 0; j<threatMap[0].length;j++){
@@ -498,6 +684,9 @@ public class StandardGame implements Game {
             System.out.println();
         }
     }
+    /**
+     * Method for printing board
+     */
     public void printBoard(){
         for(int i = 0; i< board.length; i++){
             for(int j = 0; j<board[0].length;j++){
@@ -510,6 +699,11 @@ public class StandardGame implements Game {
             System.out.println();
         }
     }
+    /**
+     * Method for computing opponent
+     * @param player Player representing player
+     * @return Player representing opponent
+     */
     private Player computeOpponent(Player player){
         return player == Player.RICK ? Player.MORTY : Player.RICK;
     }

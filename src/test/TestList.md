@@ -8,7 +8,6 @@ TestList
 * When the same sequence of moves is repeated 4 times, and morty make rick check all three times, Morty loses game.
 
 
-
   **Done**
 
 * [OK] When a queen is placed the threatmap is updated correctly.
