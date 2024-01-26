@@ -3,7 +3,6 @@ package Standard;
 import Framework.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.List.copyOf;
 
@@ -44,6 +43,25 @@ public class StandardGame implements Game {
     @Override
     public Brick getBrickAtBoard(int x, int y) {
         return board[y][x];
+    }
+
+    /**
+     * Method saying whether it is okay to promote
+     * @param brick, brick to promote
+     * @return boolean, indicating whether it is allowed to promote.
+     */
+    @Override
+    public boolean canPromote(Brick brick){
+        boolean brickOwnerIsRick = brick.getPlayer() == Player.RICK;
+        int[] coordsOfBrick = findBrickCords(brick);
+        if(brickOwnerIsRick)
+        {
+            System.out.println(coordsOfBrick[0]);
+            return coordsOfBrick[0] >= board.length-4;
+        }
+        else{
+            return coordsOfBrick[0] <= 3;
+        }
     }
 
     /**
@@ -141,9 +159,11 @@ public class StandardGame implements Game {
      */
     private void killABrick(Brick brick, int deltax, int deltay, int currentY, int currentX) {
         Player ownerOfBrickMoved = brick.getPlayer();
-        GameConstants typeOfBrickKilled = board[currentY + deltay][currentX + deltax].getType();
+        Brick brickKilled = board[currentY + deltay][currentX + deltax];
+        GameConstants typeOfBrickKilled = brickKilled.getType();
+        Brick promotedVersionOfBrickKilled = brickKilled.getPromoteBrick();
         List<int[]> movePatternOfBrickKilled = brick.getMovePatterns();
-        table.get(ownerOfBrickMoved).add(new StandardBrick(ownerOfBrickMoved, movePatternOfBrickKilled,typeOfBrickKilled));
+        table.get(ownerOfBrickMoved).add(new StandardBrick(ownerOfBrickMoved, movePatternOfBrickKilled,typeOfBrickKilled,promotedVersionOfBrickKilled));
     }
 
     /**
@@ -444,26 +464,26 @@ public class StandardGame implements Game {
         return null;
     }
 
+
     /**
-     * Method for adding a brick to the table
-     * @param owner Player representing owner of brick
-     * @param movePattern List<int[]> representing move pattern of brick
-     * @param typeOfBrick GameConstants representing type of brick
+     * Method for adding brick at position
+     * @param brick, Brick to add
+     * @param x int representing x position of where to place brick
+     * @param y int representing y position of where to place brick
      */
     @Override
-    public void addBrick(Player owner, List<int[]> movePattern, GameConstants typeOfBrick, int x, int y) {
-        Brick newBrick = new StandardBrick(owner,movePattern,typeOfBrick);
-        board[y][x] = newBrick;
-        boolean newBrickIsKing = newBrick.getType() == GameConstants.KING;
+    public void addBrick(Brick brick,int x, int y) {
+        board[y][x] = brick;
+        boolean newBrickIsKing = brick.getType() == GameConstants.KING;
         if(newBrickIsKing){
-            kings.put(newBrick.getPlayer(),newBrick);
+            kings.put(brick.getPlayer(),brick);
         }
         //Update for bricks affected by placement of new brick
         if(threatMap[y][x]!= null){
             threatMapUpdaterForBrickAtPosition(y, x);
         }
 
-        threatMapUpdater(x, y, newBrick);
+        threatMapUpdater(x, y, brick);
     }
 
     /**
@@ -634,7 +654,7 @@ public class StandardGame implements Game {
                 }
             }
         }
-        addBrick(playerOwningBrick,brickAtTable.getMovePatterns(),brickAtTable.getType(),x,y);
+        addBrick(brickAtTable,x,y);
         table.get(playerOwningBrick).remove(brickAtTable);
         return Status.OK;
     }
@@ -661,6 +681,23 @@ public class StandardGame implements Game {
         boolean enemyIsThreateningKing = 0 != threatMap[kingY][kingX].stream().map(brick -> brick.getPlayer()).filter(p -> ! p.equals(player)).count();
         return enemyIsThreateningKing;
     }
+
+    @Override
+    public void promote(Brick brick) {
+        boolean isAllowedToPromote = canPromote(brick);
+        if(!isAllowedToPromote){
+            return;
+        }
+        replaceBrickWithPromotedBrick(brick);
+    }
+
+    private void replaceBrickWithPromotedBrick(Brick brick) {
+        int[] currentCords = findBrickCords(brick);
+        int currentY =currentCords[0];
+        int currentX = currentCords[1];
+        board[currentY][currentX] = brick.getPromoteBrick();
+    }
+
     /**
      * Method for printing threatMap
      */

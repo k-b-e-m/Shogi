@@ -18,6 +18,8 @@ public interface Game {
      */
     Brick getBrickAtBoard(int x, int y);
 
+    boolean canPromote(Brick brick);
+
     /**
      * Method for getting bricks at table
      * @param who, Player representing player
@@ -53,17 +55,14 @@ public interface Game {
      */
 
 
-    /**
-     * Method for adding brick at position
-     *
-     * @param owner Player representing owner of brick
-     * @param movePattern List<int[]> representing move pattern of brick
-     * @param typeOfBrick GameConstants representing type of brick
-     * @param x,   int representing x position of where to place brick
-     * @param y    int representing y position of where to place brick
-     */
 
-    void addBrick(Player owner, List<int[]> movePattern, GameConstants typeOfBrick, int x, int y);
+    /**
+     * Method for adding a brick to the board
+     * @param brick Brick representing brick to add
+     * @param x int representing x position of where to place brick
+     * @param y int representing y position of where to place brick
+     */
+    void addBrick(Brick brick, int x, int y);
 
     /**
      * method for placing a brick from the table on the board
@@ -75,4 +74,6 @@ public interface Game {
     Status placeFromTable(Brick brickAtTable, int x, int y);
 
     boolean getCheck(Player player);
+
+     void promote(Brick brick);
 }

@@ -5,10 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6508ab0d-f71a-4197-8d0f-593d0920e8dc" name="Changes" comment="Enabled to place bricks and some status exceptions for this">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Brick.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Brick.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/GameConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/GameConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/PredefinedMovepatterns.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/PredefinedMovepatterns.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/TestList.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/TestList.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/TestAlpha.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestAlpha.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,7 +133,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="TestAlpha.shouldGiveMortyInCheckWhenKingIsThreatened" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="TestAlpha.shouldGiveMortyInCheckWhenPawnIsMovedToCheckKing" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -141,7 +146,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;TestAlpha.shouldGiveMortyInCheckWhenKingIsThreatened&quot;" />
+            <option value="&quot;TestAlpha.shouldGiveMortyInCheckWhenPawnIsMovedToCheckKing&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -227,10 +232,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.TestAlpha" />
+        <item itemvalue="Gradle.TestAlpha.shouldGiveMortyInCheckWhenPawnIsMovedToCheckKing" />
         <item itemvalue="Gradle.TestAlpha.shouldUpdateThreatMapCorrectWhenPawnIsInWayForQueen" />
         <item itemvalue="Gradle.TestAlpha.shouldHaveBishopAtCorrectThreatMap" />
         <item itemvalue="Gradle.TestAlpha.shouldHaveBishopAtCorrectThreatMapWhenPawnIsInWay" />
-        <item itemvalue="Gradle.TestAlpha.shouldGiveMortyInCheckWhenKingIsThreatened" />
       </list>
     </recent_temporary>
   </component>
@@ -253,7 +258,7 @@
       <workItem from="1704571621693" duration="8707000" />
       <workItem from="1704645607790" duration="12000" />
       <workItem from="1706175075991" duration="6574000" />
-      <workItem from="1706276419043" duration="1764000" />
+      <workItem from="1706276419043" duration="5992000" />
     </task>
     <task id="LOCAL-00001" summary="First test passed for Alpha">
       <created>1698552056237</created>

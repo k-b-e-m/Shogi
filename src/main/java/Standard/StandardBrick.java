@@ -13,12 +13,14 @@ public class StandardBrick implements Brick {
     private GameConstants type;
     private List<int[]> movePatterns;
     private Player owner;
+    private Brick brickUpgrade;
 
-    public StandardBrick(Player owner,List<int[]> movePatterns, GameConstants type) {
+    public StandardBrick(Player owner,List<int[]> movePatterns, GameConstants type, Brick promotedVersionOfBrick) {
         this.type = type;
         this.owner = owner ;
         this.movePatterns = movePatterns;
         this.type = type;
+        this.brickUpgrade = promotedVersionOfBrick;
     }
 
     @Override
@@ -34,5 +36,15 @@ public class StandardBrick implements Brick {
     @Override
     public Player getPlayer() {
         return owner;
+    }
+
+    @Override
+    public Brick getPromoteBrick() {
+        return brickUpgrade == null ? this : brickUpgrade;
+    }
+
+    @Override
+    public void setOwner(Player player) {
+        this.owner = player;
     }
 }

@@ -2,6 +2,7 @@ import Framework.Brick;
 import Framework.GameConstants;
 import Framework.Player;
 import Framework.Status;
+import Standard.StandardBrick;
 import Standard.StandardGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,17 +19,39 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class TestAlpha {
 
     private StandardGame game;
+    private Brick rickPawn;
+    private Brick rickKnight;
+    private Brick mortyPawn;
+    private Brick mortyKnight;
+    private Brick mortyKing;
+    private Brick mortyRook;
+    private Brick rickRook;
+    private Brick rickBishop;
+    private Brick rickQueen;
+    private Brick rickSilver;
 
     @BeforeEach
 
     public void setUp() {
         game = new StandardGame();
+        rickPawn = new StandardBrick(Player.RICK, PawnPattern, GameConstants.PAWN, new StandardBrick(Player.RICK, TokinPattern, GameConstants.TOKIN, null));
+        rickKnight = new StandardBrick(Player.RICK, KnightPattern, GameConstants.KNIGHT, new StandardBrick(Player.RICK, PromotedKnightPattern, GameConstants.PROMOTED_KNIGHT, null));
+        mortyPawn = new StandardBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, new StandardBrick(Player.MORTY, TokinPattern, GameConstants.TOKIN, null));
+        mortyKnight = new StandardBrick(Player.MORTY, KnightPattern, GameConstants.KNIGHT, new StandardBrick(Player.MORTY, PromotedKnightPattern, GameConstants.PROMOTED_KNIGHT, null));
+        mortyKing = new StandardBrick(Player.MORTY, KingPattern, GameConstants.KING, null);
+        mortyRook = new StandardBrick(Player.MORTY, RookPattern, GameConstants.ROOK, new StandardBrick(Player.MORTY, DragonPattern, GameConstants.DRAGON, null));
+        rickRook = new StandardBrick(Player.RICK, RookPattern, GameConstants.ROOK, new StandardBrick(Player.RICK, DragonPattern, GameConstants.DRAGON, null));
+        rickBishop = new StandardBrick(Player.RICK, BishopPattern, GameConstants.BISHOP, new StandardBrick(Player.RICK, HorsePattern, GameConstants.DRAGON, null));
+        rickQueen = new StandardBrick(Player.RICK, QueenPattern, GameConstants.QUEEN,null);
+        rickSilver = new StandardBrick(Player.RICK, SilverPattern, GameConstants.SILVER, new StandardBrick(Player.RICK, PromotedSilverPattern, GameConstants.PROMOTED_SILVER, null));
     }
+
+
 
     @Test
     public void WhenPawnIsMovedOneUpItIsOkay() {
         //Given a game Where there is a pawn at position 1,1.
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 1);
+        game.addBrick(rickPawn, 1, 1);
         Brick pawnAt1_1 = game.getBrickAtBoard(1, 1);
         //When the brick is moved up one
         Status movedBrick = game.moveBrick(pawnAt1_1, 0, 1);
@@ -41,7 +64,7 @@ public class TestAlpha {
     @Test
     public void shouldGiveStatusNotOkayWhenPawnIsMovedToSide() {
         //Given a a game with a pawn at position 1,1
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 1);
+        game.addBrick(rickPawn, 1, 1);
         Brick pawn = game.getBrickAtBoard(1, 1);
         //When the pawn is moved one to the side:
         Status brickMoved = game.moveBrick(pawn, 1, 0);
@@ -54,7 +77,7 @@ public class TestAlpha {
     @Test
     public void shouldGiveStatusOutOfBoardMoveWhenPawnTriesToMoveOverEdge() {
         //Given a game where the pawn is at position 1,8 (Edge of board)
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 8);
+        game.addBrick(rickPawn, 1, 8);
         Brick brickAtBoard = game.getBrickAtBoard(1, 8);
         //When the brick is moved out the board
         Status movedBrick = game.moveBrick(brickAtBoard, 0, 1);
@@ -65,8 +88,8 @@ public class TestAlpha {
     @Test
     public void shoudlGiveStatusField_Occupied_By_FriendWhenRickMovesPawnAtOwnKnight() {
         //Given a game where Rick has a pawn at position 1,1 and a knight at 2,1
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 1);
-        game.addBrick(Player.RICK, KnightPattern, GameConstants.KNIGHT, 1, 2);
+        game.addBrick(rickPawn, 1, 1);
+        game.addBrick(rickKnight, 1, 2);
         Brick pawn = game.getBrickAtBoard(1, 1);
         //When Rick moves the brick
         Status moveBrick = game.moveBrick(pawn, 0, 1);
@@ -78,8 +101,8 @@ public class TestAlpha {
     @Test
     public void shouldAllowRickToMovePawnAndRemoveMortyBrickWhenPawnMovesToMortyField() {
         //Given a game where Rick has a pawn at position (1,1) and morty has a pawn at position (1,2)
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 1);
-        game.addBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, 1, 2);
+        game.addBrick(rickPawn, 1, 1);
+        game.addBrick(mortyPawn, 1, 2);
         Brick pawn = game.getBrickAtBoard(1, 1);
         //When Rick moves the pawn to (1,2)
         Status moveBrick = game.moveBrick(pawn, 0, 1);
@@ -92,7 +115,7 @@ public class TestAlpha {
     @Test
     public void shouldMoveMortyPawnAtPosition_1_1_to_0_1_WhenMortyMovesBrick() {
         //Given a game where Morty has a pawn at position (1,1)
-        game.addBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, 1, 1);
+        game.addBrick(mortyPawn, 1, 1);
         Brick pawn = game.getBrickAtBoard(1, 1);
         //When Morty moves the pawn to (0,1)
         Status moveBrick = game.moveBrick(pawn, 0, 1);
@@ -105,8 +128,8 @@ public class TestAlpha {
     @Test
     public void shouldAddMortyPawnToRickTable() {
         //Given a game where Rick pawn is infornt of morty pawn
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 1);
-        game.addBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, 1, 2);
+        game.addBrick(rickPawn, 1, 1);
+        game.addBrick(mortyPawn, 1, 2);
         Brick pawn = game.getBrickAtBoard(1, 1);
         //When Rick moves the pawn to (1,2)
         Status moveBrick = game.moveBrick(pawn, 0, 1);
@@ -119,8 +142,8 @@ public class TestAlpha {
     @Test
     public void shouldAddKnightBrickAndRemoveFromRickTableWhenKnightFromTableIsPlaced() {
         //Given a game where Rick has a knight at his table from killing morty knight
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 1);
-        game.addBrick(Player.MORTY, KnightPattern, GameConstants.KNIGHT, 1, 2);
+        game.addBrick(rickPawn, 1, 1);
+        game.addBrick(mortyKnight, 1, 2);
         Brick pawn = game.getBrickAtBoard(1, 1);
         game.moveBrick(pawn, 0, 1);
         //When Rick places his knight at (3,3) from his table
@@ -135,8 +158,8 @@ public class TestAlpha {
     @Test
     public void shouldGiveStatusPawn_IN_CollumnWhenMortyTriesToPlaceAPawnAtACollumnContainingAPawn() {
         //Given a game where Morty has a pawn at 1,1 and has a pawn at his table
-        game.addBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, 1, 2);
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 1);
+        game.addBrick(mortyPawn, 1, 2);
+        game.addBrick(rickPawn, 1, 1);
         game.moveBrick(game.getBrickAtBoard(1, 1), 0, 1);
         //When Morty tries to place a pawn at (3,1)
         Status placedBrick = game.placeFromTable(game.getBrickAtTable(0), 1, 3);
@@ -147,8 +170,8 @@ public class TestAlpha {
     @Test
     public void shouldGiveMortyInCheckWhenKingIsThreatenedByPlacedPawn() {
         //Given a game where morty has a king at 1,5 and Rick threatens mortys king with a pawn at 1,4
-        game.addBrick(Player.MORTY, KnightPattern, GameConstants.KING, 1, 5);
-        game.addBrick(Player.RICK, new LinkedList<>(Arrays.asList(new int[]{1, 0})), GameConstants.PAWN, 1, 4);
+        game.addBrick(mortyKing, 1, 5);
+        game.addBrick(rickPawn, 1, 4);
         //When Checking if morty is in check
         boolean mortyCheck = game.getCheck(Player.MORTY);
         //Then it is true
@@ -158,11 +181,11 @@ public class TestAlpha {
     @Test
     public void shouldGiveMortyInCheckWhenPawnIsMovedToCheckKing() {
         //Given a game where morty has a king at 1,5 and rick has a pawn at 1,3
-        game.addBrick(Player.MORTY, KnightPattern, GameConstants.KING, 1, 5);
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 3);
+        game.addBrick(mortyKing, 1, 5);
+        game.addBrick(rickPawn, 1, 3);
         //When Rick move his pawn to and checks mortys king
         Brick brickToBeMoved = game.getBrickAtBoard(1, 3);
-        game.moveBrick(brickToBeMoved, 0, 1);
+        Status moveBrick = game.moveBrick(brickToBeMoved, 0, 1);
         Boolean mortyCheck = game.getCheck(Player.MORTY);
         assertThat(mortyCheck, is(true));
     }
@@ -170,9 +193,9 @@ public class TestAlpha {
     @Test
     public void shouldGiveStatus_PUTS_ONESELF_IN_CHECK_WhenKingIsInCheckAndHasAPossibleMove() {
         //Given a game where morty is in check and it is his turn
-        game.addBrick(Player.MORTY, KingPattern, GameConstants.KING, 1, 5);
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 4);
-        game.addBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, 4, 4);
+        game.addBrick(mortyKing, 1, 5);
+        game.addBrick(rickPawn, 1, 4);
+        game.addBrick(mortyPawn, 4, 4);
         //When morty tries to move his pawn to 4,5
         Brick brickToBeMoved = game.getBrickAtBoard(4, 4);
         Status mortyMove = game.moveBrick(brickToBeMoved, 0, 1);
@@ -183,8 +206,8 @@ public class TestAlpha {
     @Test
     public void shouldAllowMortyToMoveKingOutOfCheck(){
         //Given a game where morty has his king in check
-        game.addBrick(Player.MORTY, KingPattern, GameConstants.KING, 1, 5);
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 1, 4);
+        game.addBrick(mortyKing, 1, 5);
+        game.addBrick(rickPawn, 1, 4);
         //When Morty Moves his brick out of check
         Brick brickToBeMoved = game.getBrickAtBoard(1, 5);
         Status mortyMove = game.moveBrick(brickToBeMoved, 1, 0);
@@ -195,8 +218,8 @@ public class TestAlpha {
     @Test
     public void shouldNotAllowRookToMoveThroughPiecesYAxis(){
         //Given a game where morty has a rook at 1,1 and rick has a pawn at 1,2
-        game.addBrick(Player.MORTY, RookPattern, GameConstants.ROOK, 1, 1);
-        game.addBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, 1, 2);
+        game.addBrick(mortyRook, 1, 1);
+        game.addBrick(mortyPawn, 1, 2);
         //When Rick tries to move his pawn to 1,3
         Brick brickToBeMoved = game.getBrickAtBoard(1, 1);
         Status rickMove = game.moveBrick(brickToBeMoved, 0, 2);
@@ -207,8 +230,8 @@ public class TestAlpha {
     @Test
     public void shouldNotAllowRookToMoveThroughPiecesXaxis(){
         //Given a game where morty has a rook at 1,1 and rick has a pawn at 1,2
-        game.addBrick(Player.MORTY, RookPattern, GameConstants.ROOK, 3, 1);
-        game.addBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, 2, 1);
+        game.addBrick(mortyRook, 3, 1);
+        game.addBrick(mortyPawn, 2, 1);
         //When Rick tries to move his pawn to 1,3
         Brick brickToBeMoved = game.getBrickAtBoard(3, 1);
         Status mortyMove = game.moveBrick(brickToBeMoved, -2, 0);
@@ -220,9 +243,9 @@ public class TestAlpha {
     @Test
     public void shouldNotAllowToMovePawnThatPutsOneSelfInCheck(){
         //Given a game where morty has a King at 1,1, a pawn at 2,1 and rick has a rook at 5,1
-        game.addBrick(Player.MORTY, KingPattern, GameConstants.KING, 1, 1);
-        game.addBrick(Player.MORTY, PawnPattern, GameConstants.PAWN, 2, 1);
-        game.addBrick(Player.RICK, RookPattern, GameConstants.ROOK, 5, 1);
+        game.addBrick(mortyKing, 1, 1);
+        game.addBrick(mortyPawn, 2, 1);
+        game.addBrick(rickRook, 5, 1);
         //When Morty tries to move his pawn to 2,2
         Brick brickToBeMoved = game.getBrickAtBoard(2, 1);
         Status mortyMove = game.moveBrick(brickToBeMoved, 0, 1);
@@ -233,8 +256,8 @@ public class TestAlpha {
     @Test
     public void shouldNotAllowMoveKingIntoCheck(){
         //Given a game where morty has a King at 1,1 and rick has a rook at 5,1
-        game.addBrick(Player.MORTY, KingPattern, GameConstants.KING, 1, 1);
-        game.addBrick(Player.RICK, RookPattern, GameConstants.ROOK, 5, 1);
+        game.addBrick(mortyKing, 1, 1);
+        game.addBrick(rickRook, 5, 1);
         //When Morty tries to move his king to 2,1
         Brick brickToBeMoved = game.getBrickAtBoard(1, 1);
         Status mortyMove = game.moveBrick(brickToBeMoved, 1, 0);
@@ -245,8 +268,8 @@ public class TestAlpha {
     @Test
     public void shouldNotAllowBishopToMoveThroughBricks(){
         //Given a game where morty has a bishop at 1,1 and rick has a pawn at 2,2
-        game.addBrick(Player.RICK, BishopPattern, GameConstants.BISHOP, 5, 1);
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 6, 2);
+        game.addBrick(rickBishop, 5, 1);
+        game.addBrick(rickPawn, 6, 2);
         //When Morty tries to move his bishop to 3,3
         Brick brickToBeMoved = game.getBrickAtBoard(5, 1);
         Status mortyMove = game.moveBrick(brickToBeMoved, 2, 2);
@@ -257,8 +280,8 @@ public class TestAlpha {
     @Test
     public void shouldNotAllowQueenToMoveThroughObjects(){
         //Given a game where morty has a queen at 1,1 and rick has a pawn at 2,2
-        game.addBrick(Player.RICK, QueenPattern, GameConstants.QUEEN, 5, 1);
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 6, 2);
+        game.addBrick(rickQueen, 5, 1);
+        game.addBrick(rickPawn, 6, 2);
         //When Morty tries to move his queen to 3,3
         Brick brickToBeMoved = game.getBrickAtBoard(5, 1);
         Status mortyMove = game.moveBrick(brickToBeMoved, 2, 2);
@@ -269,7 +292,7 @@ public class TestAlpha {
     @Test
     public void shouldHaveBishopAtCorrectThreatMap(){
         //Given a bishop at 5,5
-        game.addBrick(Player.RICK, BishopPattern, GameConstants.BISHOP, 5, 5);
+        game.addBrick(rickBishop, 5, 5);
         //When checking the threat map at 6,6 it should be true
         boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
         boolean threatAt44 = game.getThreatMap()[4][4].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
@@ -284,8 +307,8 @@ public class TestAlpha {
     @Test
     public void shouldHaveBishopAtCorrectThreatMapWhenPawnIsInWay(){
         //Given a bishop at 5,5 and a pawn at 6,6
-        game.addBrick(Player.RICK, BishopPattern, GameConstants.BISHOP, 5, 5);
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 6, 6);
+        game.addBrick(rickBishop, 5, 5);
+        game.addBrick(rickPawn, 6, 6);
         //When checking the threat map at 6,6 it should be true
         boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
         boolean threatAt77 = game.getThreatMap()[7][7].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
@@ -298,7 +321,7 @@ public class TestAlpha {
     @Test
     public void shouldUpdateThreatMapForQueenCorrect(){
         //Given a queen at 5,5
-        game.addBrick(Player.RICK, QueenPattern, GameConstants.QUEEN, 5, 5);
+        game.addBrick(rickQueen, 5, 5);
         //When checking the threat map around the queen
         boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
         boolean threatAt44 = game.getThreatMap()[4][4].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
@@ -321,9 +344,9 @@ public class TestAlpha {
     @Test
     public void shouldUpdateThreatMapCorrectWhenPawnIsInWayForQueen(){
         //Given a queen at 5,5 and a pawn at 6,6 and at 5,6
-        game.addBrick(Player.RICK, QueenPattern, GameConstants.QUEEN, 5, 5);
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 6, 6);
-        game.addBrick(Player.RICK, PawnPattern, GameConstants.PAWN, 5, 6);
+        game.addBrick(rickQueen, 5, 5);
+        game.addBrick(rickPawn, 6, 6);
+        game.addBrick(rickPawn, 5, 6);
         game.printThreatMap();
         //When checking the threat map around the queen
         boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
@@ -335,4 +358,48 @@ public class TestAlpha {
         assertThat(threatAt57, is(false));
     }
 
+    @Test
+    public void shouldAllowSilverToMoveWhenItIsWithinMortySideOfBoard(){
+        //Given a game where rick has a Silver at 1,5
+        game.addBrick(rickSilver, 1, 5);
+        //When rick checks if he can promote his silver
+        Brick brick = game.getBrickAtBoard(1, 5);
+        boolean canPromote = game.canPromote(brick);
+        //then it should be true
+        assertThat(canPromote,is(true));
+    }
+
+    @Test
+    public void shouldAllowMortyPawnToBePromotedWhenWithinRickSideIfBoard(){
+        //given a game where morty has a pawn at 1,2
+        game.addBrick(mortyPawn, 1, 2);
+        //When morty checks if he can promote his pawn
+        Brick brick = game.getBrickAtBoard(1, 2);
+        boolean canPromote = game.canPromote(brick);
+        //Then it should be true
+        assertThat(canPromote,is(true));
+    }
+
+    @Test
+    public void shouldNotAllowMortyToPromotePawn() {
+        //Given a game where Morty has a Pawn at 1,6
+        game.addBrick(mortyPawn, 1, 6);
+        //When Morty tries to promote his pawn
+        Brick brick = game.getBrickAtBoard(1, 6);
+        boolean canPromote = game.canPromote(brick);
+        //Then it should be false
+        assertThat(canPromote, is(false));
+    }
+
+    //When Ricks Pawn Is Allowed To be promoted and Rick Tries to promote it, it is switched out with a Tokin Piece.
+    @Test
+    public void shouldPromotePawnToTokinPiece(){
+        //Given a game where Rick has a Pawn at 1,6
+        game.addBrick(rickPawn, 1, 6);
+        //When Rick Promotes Brick
+        Brick brick = game.getBrickAtBoard(1, 6);
+        game.promote(brick);
+        //Then it should be a Tokin Piece
+        assertThat(game.getBrickAtBoard(1, 6).getType(), is(GameConstants.TOKIN));
+    }
 }

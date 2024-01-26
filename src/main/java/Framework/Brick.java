@@ -10,4 +10,8 @@ public interface Brick {
     List<int[]> getMovePatterns();
 
     Player getPlayer();
+
+    Brick getPromoteBrick();
+
+    void setOwner(Player player);
 }

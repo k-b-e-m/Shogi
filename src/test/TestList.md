@@ -1,4 +1,5 @@
 TestList
+* When Ricks Pawn Is Allowed To be promoted and Rick Tries to promote it, it is switched out with a Tokin Piece.
 * When Rick has Morty's king in a checkmate, Rick wins the game.
 * When Ricks's pawn is tried to being placed before a friendly knight, the move is not allowed and gets status "NO_LEGAL_MOVES_AVAILABLE"
 * When Ricks's pawn is tried to be placed before the edge of the board, the move is not allowed and gets status "NO_LEGAL_MOVES_AVAILABLE"
@@ -9,7 +10,9 @@ TestList
 
 
   **Done**
-
+* [OK] When Morty checks If he can promote a pawn, he can't because he is not on Ricks side of the board.
+* [OK] When Mortys Rook moves within the 3 rows of Ricks Side The Rook Can Be Promoted.
+* [OK] When Ricks Silver Is Within The 3 rows on Mortys Side, The Pawn can be Promoted.
 * [OK] When a queen is placed the threatmap is updated correctly.
 * [OK] When a bishop is placed the threatmap is updated correctly.
 * [OK] A bishop cannot move through pieces
