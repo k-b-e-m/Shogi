@@ -1,7 +1,4 @@
 TestList
-* When Morty has a king at 3,7 and a rook at  7,6 and rick has a rook at 2,0, a queen at 3,0 and a rook at 4,0, When checked if Morty is in check, it is false.
-* When Ricks's pawn is tried to being placed before a friendly knight, the move is not allowed and gets status "NO_LEGAL_MOVES_AVAILABLE"
-* When Ricks's pawn is tried to be placed before the edge of the board, the move is not allowed and gets status "NO_LEGAL_MOVES_AVAILABLE"
 * When it is Rick's turn and Morty tries to move, gets status "Player_Not_In_Turn"
 * When Rick moves his pawn to Morty's side of the board (last 3 rows), the pawn is promoted to a promoted Pawn.
 * When the same sequence of moves is repeated 4 times, the game is a draw.
@@ -13,6 +10,7 @@ TestList
 
 
   **Done**
+* [OK] When Morty has a king at 3,7 and a rook at  7,6 and rick has a rook at 2,0, a queen at 3,0 and a rook at 4,0, When checked if Morty is in check, it is false.
 * [OK] When Rick has a king at 1,5 and morty has a pawn at 1,4 and checkmate is checked, it is false.
 * [OK] When Rick has a king at 0,0, and morty has a rook at 3,0 and a queen at 6,1 and checkmate is checked, it is true.
 * [OK] When Ricks Pawn Is Allowed To be promoted and Rick Tries to promote it, it is switched out with a Tokin Piece.

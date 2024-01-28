@@ -3,6 +3,7 @@ package Standard;
 import Framework.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.List.copyOf;
 
@@ -109,9 +110,13 @@ public class StandardGame implements Game {
     }
 
     private void threatMapUpdaterForBrickAtPosition(int currentY, int currentX) {
-        List<Brick> listOfBrickToUpdate = copyOf(threatMap[currentY][currentX]);
-        for(Brick threatingBrick : listOfBrickToUpdate){
-            threatMapUpdater(currentX, currentY, threatingBrick);
+      Set<int[]> listOfBrickCordsForPosition = new HashSet<>(copyOf(threatMap[currentY][currentX]).stream().map(brick -> findBrickCords(brick)).collect(Collectors.toList()));
+        for (int[] brickCords : listOfBrickCordsForPosition) {
+            Brick currentBrick = board[brickCords[0]][brickCords[1]];
+            if(currentBrick == null){
+                continue;
+            }
+            threatMapUpdater(brickCords[1], brickCords[0], currentBrick);
         }
     }
 
@@ -208,7 +213,7 @@ public class StandardGame implements Game {
         //Check whether move results in putting oneself in check
         boolean brickIsKing = brick.getType() == GameConstants.KING;
         if(!brickIsKing){
-            Status putsOneselfInCheck = oneInOwnCheckByMovingNonKing(currentCords);
+            Status putsOneselfInCheck = oneInOwnCheckByMovingNonKing(currentCords,deltax,deltay);
             if (putsOneselfInCheck != null) return putsOneselfInCheck;
 
         }
@@ -262,24 +267,24 @@ public class StandardGame implements Game {
      * @param currentCords int[] representing current coordinates of brick
      * @return Status representing status of move
      */
-    private Status oneInOwnCheckByMovingNonKing(int[] currentCords) {
+    private Status oneInOwnCheckByMovingNonKing(int[] currentCords,int deltaX, int deltaY) {
         int x = currentCords[1];
         int y = currentCords[0];
-        Brick brickToMove = board[y][x];
+        Brick brickToMove = getBrickAtBoard(x,y);
+        Player player = brickToMove.getPlayer();
+        Brick oldBrick = getBrickAtBoard(x+deltaX,y+deltaY);
         board[y][x] = null;
-        Iterator<Brick> itearator = copyOf(threatMap[y][x]).iterator() ;
-        while(itearator.hasNext()){
-            Brick brick = itearator.next();
-            threatMapUpdater(x,y,brick);
-        }
-        boolean kingIsInCheck = getCheck(brickToMove.getPlayer());
+        board[y+deltaY][x+deltaX] = brickToMove;
+        threatMapUpdater(x+deltaX,y+deltaY,brickToMove);
+        threatMapUpdaterForBrickAtPosition(y,x);
+        boolean playerIsInCheck = getCheck(player);
         board[y][x] = brickToMove;
-        itearator = copyOf(threatMap[y][x]).iterator();
-        while(itearator.hasNext()){
-            Brick brick = itearator.next();
-            threatMapUpdater(x,y,brick);
+        board[y+deltaY][x+deltaX] = oldBrick;
+        if(oldBrick!= null){
+            threatMapUpdater(x+deltaX,y+deltaY,oldBrick);
         }
-        if(kingIsInCheck){
+        threatMapUpdaterForBrickAtPosition(y+deltaY,x+deltaX);
+        if(playerIsInCheck){
             return Status.PUTS_ONESELF_IN_CHECK;
         }
         return null;
@@ -494,9 +499,7 @@ public class StandardGame implements Game {
      */
     private void threatMapUpdater(int x, int y, Brick brick) {
         createNewSetForThreatMapSpot(x, y);
-        //Clear for previous threats by brick
-        //clearPreviousThreatFromBrick(brick);
-        //Add the new threat for brick
+        clearPreviousThreatFromBrick(brick);
         addNewThreatsToThreatMap(x, y, brick);
     }
 
@@ -528,7 +531,7 @@ public class StandardGame implements Game {
     private void clearPreviousThreatFromBrick(Brick brick) {
         for(int i = 0; i< threatMap.length; i++){
             for(int j = 0; j<threatMap[0].length;j++){
-                if(threatMap[i][j]!= null){
+                if(threatMap[i][j]!= null && threatMap[i][j].contains(brick)){
                     threatMap[i][j].remove(brick);
                 }
             }
@@ -686,21 +689,34 @@ public class StandardGame implements Game {
     }
 
     @Override
-    public boolean getCheckmate(Player player) {
-        Brick playerKing = kings.get(player);
-        int[] kingCords = findBrickCords(playerKing);
-        List<int[]> kingMovePatterns = playerKing.getMovePatterns();
+    public boolean playerIsInCheckmate(Player player) {
         Status checkmateChecker = Status.PUTS_ONESELF_IN_CHECK;
-        for(int[] move : kingMovePatterns){
-            Status checkForLegalMove = legalMove(playerKing,move[1],move[0]);
-            boolean validMove = checkForLegalMove == Status.OK;
-            if(validMove){
-                checkmateChecker = checkForLegalMove;
-                break;
+        Set<Brick> playersBricks = getAllBricksBelongToPlayer(player);
+        for(Brick brick:playersBricks){
+            List<int[]> movePatternForBrick = brick.getMovePatterns();
+            for(int[] move : movePatternForBrick){
+                Status checkForLegalMove = legalMove(brick,move[1],move[0]);
+                boolean validMove = checkForLegalMove == Status.OK;
+                if(validMove){
+                    checkmateChecker = checkForLegalMove;
+                    break;
+                }
             }
         }
         boolean legalMoveExist = checkmateChecker == Status.OK;
         return !legalMoveExist;
+    }
+
+    private Set<Brick> getAllBricksBelongToPlayer(Player player) {
+        Set<Brick> result = new HashSet<>();
+        for(int i = 0; i< board.length; i++){
+            for(int j = 0; j<board[0].length;j++){
+                if(board[i][j]!= null && board[i][j].getPlayer() == player){
+                    result.add(board[i][j]);
+                }
+            }
+        }
+        return result;
     }
 
     private void replaceBrickWithPromotedBrick(Brick brick) {
@@ -727,7 +743,7 @@ public class StandardGame implements Game {
                 if(threatMap[i][j] == null){
                     System.out.print(color + "  0  ");
                 }else{
-                    System.out.print(color + "  " + threatMap[i][j].size() + "  ");
+                    System.out.print(color + "  " + threatMap[i][j].size()+ "  ");
                 }
             }
             System.out.println();

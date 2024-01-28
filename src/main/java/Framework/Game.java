@@ -77,5 +77,5 @@ public interface Game {
 
      void promote(Brick brick);
 
-    boolean getCheckmate(Player player);
+    boolean playerIsInCheckmate(Player player);
 }

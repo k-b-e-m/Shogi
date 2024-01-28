@@ -47,4 +47,10 @@ public class StandardBrick implements Brick {
     public void setOwner(Player player) {
         this.owner = player;
     }
+
+    @Override
+    public String toString() {
+        return  "" + type + " " + owner;
+    }
 }
+

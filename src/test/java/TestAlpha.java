@@ -8,9 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static Framework.PredefinedMovepatterns.*;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -32,6 +29,7 @@ public class TestAlpha {
     private Brick rickKing;
     private Brick mortyQueen;
     private Brick rickRook2;
+    private Brick rickPawn2;
 
     @BeforeEach
 
@@ -50,6 +48,7 @@ public class TestAlpha {
         rickSilver = new StandardBrick(Player.RICK, SilverPattern, GameConstants.SILVER, new StandardBrick(Player.RICK, PromotedSilverPattern, GameConstants.PROMOTED_SILVER, null));
         rickKing = new StandardBrick(Player.RICK, KingPattern, GameConstants.KING, null);
         mortyQueen = new StandardBrick(Player.MORTY, QueenPattern, GameConstants.QUEEN,null);
+        rickPawn2 = new StandardBrick(Player.RICK, PawnPattern, GameConstants.PAWN, new StandardBrick(Player.RICK, TokinPattern, GameConstants.TOKIN, null));
 
     }
 
@@ -352,17 +351,18 @@ public class TestAlpha {
     public void shouldUpdateThreatMapCorrectWhenPawnIsInWayForQueen(){
         //Given a queen at 5,5 and a pawn at 6,6 and at 5,6
         game.addBrick(rickQueen, 5, 5);
+        game.printThreatMap();
         game.addBrick(rickPawn, 6, 6);
-        game.addBrick(rickPawn, 5, 6);
+        game.addBrick(rickPawn2, 5, 6);
         //When checking the threat map around the queen
         boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
         boolean threatAt77 = game.getThreatMap()[7][7].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
-        boolean threatAt57 = game.getThreatMap()[5][7].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
+        boolean threatAt75 = game.getThreatMap()[7][5].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
         //Then it should have updated correctly
-        game.printThreatMap();
+        System.out.println("");
         assertThat(threatAt66, is(true));
         assertThat(threatAt77, is(false));
-        assertThat(threatAt57, is(false));
+        assertThat(threatAt75, is(false));
     }
 
     @Test
@@ -417,7 +417,7 @@ public class TestAlpha {
         game.addBrick(mortyRook, 3, 0);
         game.addBrick(mortyQueen, 6, 1);
         //When checking if Rick is in checkmate
-        boolean checkmate = game.getCheckmate(Player.RICK);
+        boolean checkmate = game.playerIsInCheckmate(Player.RICK);
         //Then it should be true
         game.printThreatMap();
         assertThat(checkmate, is(true));
@@ -429,7 +429,7 @@ public class TestAlpha {
         game.addBrick(rickKing, 1, 5);
         game.addBrick(mortyPawn, 1, 4);
         //When checking if morty is in checkmate
-        boolean checkmate = game.getCheckmate(Player.RICK);
+        boolean checkmate = game.playerIsInCheckmate(Player.RICK);
         //Then it should be false
         assertThat(checkmate, is(false));
 
@@ -440,23 +440,15 @@ public class TestAlpha {
     public void shouldNotHaveMortyInCheckWhenRookCanPrevent(){
         //Given a game where morty has a king at 3,7 and a rook at 7,6. And Rick has a rook at 2,0, a queen at 3,0 and a rook at 4,0
         game.addBrick(mortyKing, 3, 7);
-        game.addBrick(mortyRook, 7, 6);
+        game.addBrick(mortyRook, 0, 5);
         game.addBrick(rickRook2, 2, 0);
-        System.out.println("brick 1");
-        game.printThreatMap();
         game.addBrick(rickQueen, 3, 0);
-        System.out.println("brick 2");
-        game.printThreatMap();
         game.addBrick(rickRook, 4, 0);
-        System.out.println("brick 3");
-        game.printThreatMap();
         //When checking if morty is in check
-        boolean check = game.getCheck(Player.MORTY);
+        boolean checkmate = game.playerIsInCheckmate(Player.MORTY);
+        game.printThreatMap();
         //Then it should be false
-        assertThat(check, is(false));
+        assertThat(checkmate, is(false));
     }
-
-
-
-
+    
 }
