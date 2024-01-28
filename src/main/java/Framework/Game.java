@@ -78,4 +78,6 @@ public interface Game {
      void promote(Brick brick);
 
     boolean playerIsInCheckmate(Player player);
+
+    Player getPlayerInTurn();
 }

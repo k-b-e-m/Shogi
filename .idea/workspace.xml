@@ -7,8 +7,9 @@
     <list default="true" id="6508ab0d-f71a-4197-8d0f-593d0920e8dc" name="Changes" comment="Enabled to place bricks and some status exceptions for this">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Status.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Status.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/TestList.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/TestList.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/TestAlpha.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestAlpha.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -104,7 +105,7 @@
       <recent name="C:\Users\kris6\IdeaProjects\Shogi\src\test" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.TestAlpha.shouldNotHaveMortyInCheckWhenRookCanPrevent">
+  <component name="RunManager" selected="Gradle.TestAlpha">
     <configuration name="TestAlpha" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -119,6 +120,30 @@
             <option value=":test" />
             <option value="--tests" />
             <option value="&quot;TestAlpha&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="TestAlpha.shouldGiveNoWinnerWhenGameStarts" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;TestAlpha.shouldGiveNoWinnerWhenGameStarts&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -177,30 +202,6 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="TestAlpha.shouldNotHaveRickInCheckmate" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;TestAlpha.shouldNotHaveRickInCheckmate&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
     <configuration name="TestAlpha.shouldUpdateThreatMapCorrectWhenPawnIsInWayForQueen" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -227,11 +228,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.TestAlpha.shouldNotHaveMortyInCheckWhenRookCanPrevent" />
         <item itemvalue="Gradle.TestAlpha" />
+        <item itemvalue="Gradle.TestAlpha.shouldGiveNoWinnerWhenGameStarts" />
+        <item itemvalue="Gradle.TestAlpha.shouldNotHaveMortyInCheckWhenRookCanPrevent" />
         <item itemvalue="Gradle.TestAlpha.shouldUpdateThreatMapCorrectWhenPawnIsInWayForQueen" />
         <item itemvalue="Gradle.TestAlpha.shouldHaveRickInCheckmate" />
-        <item itemvalue="Gradle.TestAlpha.shouldNotHaveRickInCheckmate" />
       </list>
     </recent_temporary>
   </component>
@@ -257,7 +258,7 @@
       <workItem from="1706276419043" duration="6183000" />
       <workItem from="1706397843296" duration="167000" />
       <workItem from="1706442286553" duration="6620000" />
-      <workItem from="1706453643604" duration="3646000" />
+      <workItem from="1706453643604" duration="7283000" />
     </task>
     <task id="LOCAL-00001" summary="First test passed for Alpha">
       <created>1698552056237</created>
@@ -308,7 +309,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/Standard/StandardGame.java</url>
-          <line>485</line>
+          <line>505</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>

@@ -13,6 +13,7 @@ public class StandardGame implements Game {
     private HashMap<Player,List<Brick>> table;
     //Currently only implements one king at a time.
     private HashMap<Player,Brick> kings;
+    private int turnNumber;
 
     /**
      * Constructor for StandardGame
@@ -24,6 +25,7 @@ public class StandardGame implements Game {
         kings = new HashMap<>();
         table.put(Player.RICK,new LinkedList<Brick>());
         table.put(Player.MORTY,new LinkedList<Brick>());
+        turnNumber = 0;
     }
 
     /**
@@ -106,7 +108,12 @@ public class StandardGame implements Game {
         moveBrickOnBoard(brick, deltax, deltay, currentY, currentX);
         threatMapUpdater(currentX + deltax, currentY + deltay, brick);
         threatMapUpdaterForBrickAtPosition(currentY, currentX);
+        endturn();
         return legalMove;
+    }
+
+    private void endturn() {
+        turnNumber++;
     }
 
     private void threatMapUpdaterForBrickAtPosition(int currentY, int currentX) {
@@ -239,11 +246,20 @@ public class StandardGame implements Game {
             return moveCheckerForQueen(brick, deltax, deltay);
         }
 
+        Status playerInTurn = playerInTurn(brick);
+        boolean playerIsInTurn = playerInTurn == null;
+        if(!playerIsInTurn) return playerInTurn;
+
         //For Checking MovingPattern for other bricks
         Status ok = moveCheckerForBasicPieces(brick, deltax, deltay);
         boolean moveIsInMoveSet = ok == null;
         if (!moveIsInMoveSet) return ok;
+        //Checking Whether Player is in turn
         return Status.ILLEGAL_MOVE;
+    }
+
+    private Status playerInTurn(Brick brick) {
+        return brick.getPlayer() == getPlayerInTurn() ? null : Status.PLAYER_NOT_IN_TURN;
     }
 
     /**
@@ -259,6 +275,7 @@ public class StandardGame implements Game {
         if(spotIsThreatened){
             return Status.PUTS_ONESELF_IN_CHECK;
         }
+        System.out.println(""+deltax+" " + deltay);
         return null;
     }
 
@@ -696,15 +713,20 @@ public class StandardGame implements Game {
             List<int[]> movePatternForBrick = brick.getMovePatterns();
             for(int[] move : movePatternForBrick){
                 Status checkForLegalMove = legalMove(brick,move[1],move[0]);
-                boolean validMove = checkForLegalMove == Status.OK;
+                boolean validMove = checkForLegalMove == Status.OK || checkForLegalMove == Status.PLAYER_NOT_IN_TURN;
                 if(validMove){
                     checkmateChecker = checkForLegalMove;
                     break;
                 }
             }
         }
-        boolean legalMoveExist = checkmateChecker == Status.OK;
+        boolean legalMoveExist = checkmateChecker == Status.OK || checkmateChecker == Status.PLAYER_NOT_IN_TURN;
         return !legalMoveExist;
+    }
+
+    @Override
+    public Player getPlayerInTurn() {
+        return turnNumber%2 == 0 ? Player.RICK : Player.MORTY;
     }
 
     private Set<Brick> getAllBricksBelongToPlayer(Player player) {
@@ -771,5 +793,21 @@ public class StandardGame implements Game {
      */
     private Player computeOpponent(Player player){
         return player == Player.RICK ? Player.MORTY : Player.RICK;
+    }
+
+    public void setTurnToPlayer(Player player){
+        turnNumber = player == Player.RICK ? 0 : 1;
+    }
+
+    public Player getWinner() {
+        if(playerIsInCheckmate(Player.RICK)){
+            return Player.MORTY;
+        }
+        else if(playerIsInCheckmate(Player.MORTY)){
+            return Player.RICK;
+        }
+        else{
+            return null;
+        }
     }
 }

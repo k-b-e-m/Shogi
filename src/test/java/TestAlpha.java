@@ -121,6 +121,7 @@ public class TestAlpha {
     @Test
     public void shouldMoveMortyPawnAtPosition_1_1_to_0_1_WhenMortyMovesBrick() {
         //Given a game where Morty has a pawn at position (1,1)
+        game.setTurnToPlayer(Player.MORTY);
         game.addBrick(mortyPawn, 1, 1);
         Brick pawn = game.getBrickAtBoard(1, 1);
         //When Morty moves the pawn to (0,1)
@@ -199,6 +200,7 @@ public class TestAlpha {
     @Test
     public void shouldGiveStatus_PUTS_ONESELF_IN_CHECK_WhenKingIsInCheckAndHasAPossibleMove() {
         //Given a game where morty is in check and it is his turn
+        game.setTurnToPlayer(Player.MORTY);
         game.addBrick(mortyKing, 1, 5);
         game.addBrick(rickPawn, 1, 4);
         game.addBrick(mortyPawn, 4, 4);
@@ -212,6 +214,7 @@ public class TestAlpha {
     @Test
     public void shouldAllowMortyToMoveKingOutOfCheck(){
         //Given a game where morty has his king in check
+        game.setTurnToPlayer(Player.MORTY);
         game.addBrick(mortyKing, 1, 5);
         game.addBrick(rickPawn, 1, 4);
         //When Morty Moves his brick out of check
@@ -224,6 +227,7 @@ public class TestAlpha {
     @Test
     public void shouldNotAllowRookToMoveThroughPiecesYAxis(){
         //Given a game where morty has a rook at 1,1 and rick has a pawn at 1,2
+        game.setTurnToPlayer(Player.MORTY);
         game.addBrick(mortyRook, 1, 1);
         game.addBrick(mortyPawn, 1, 2);
         //When Rick tries to move his pawn to 1,3
@@ -236,6 +240,7 @@ public class TestAlpha {
     @Test
     public void shouldNotAllowRookToMoveThroughPiecesXaxis(){
         //Given a game where morty has a rook at 1,1 and rick has a pawn at 1,2
+        game.setTurnToPlayer(Player.MORTY);
         game.addBrick(mortyRook, 3, 1);
         game.addBrick(mortyPawn, 2, 1);
         //When Rick tries to move his pawn to 1,3
@@ -249,6 +254,7 @@ public class TestAlpha {
     @Test
     public void shouldNotAllowToMovePawnThatPutsOneSelfInCheck(){
         //Given a game where morty has a King at 1,1, a pawn at 2,1 and rick has a rook at 5,1
+        game.setTurnToPlayer(Player.MORTY);
         game.addBrick(mortyKing, 1, 1);
         game.addBrick(mortyPawn, 2, 1);
         game.addBrick(rickRook, 5, 1);
@@ -262,6 +268,7 @@ public class TestAlpha {
     @Test
     public void shouldNotAllowMoveKingIntoCheck(){
         //Given a game where morty has a King at 1,1 and rick has a rook at 5,1
+        game.setTurnToPlayer(Player.MORTY);
         game.addBrick(mortyKing, 1, 1);
         game.addBrick(rickRook, 5, 1);
         //When Morty tries to move his king to 2,1
@@ -318,9 +325,6 @@ public class TestAlpha {
         //When checking the threat map at 6,6 it should be true
         boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
         boolean threatAt77 = game.getThreatMap()[7][7].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.BISHOP);
-        game.printBoard();
-        System.out.println("");
-        game.printThreatMap();
         assertThat(threatAt66, is(true));
         assertThat(threatAt77, is(false));
     }
@@ -351,7 +355,6 @@ public class TestAlpha {
     public void shouldUpdateThreatMapCorrectWhenPawnIsInWayForQueen(){
         //Given a queen at 5,5 and a pawn at 6,6 and at 5,6
         game.addBrick(rickQueen, 5, 5);
-        game.printThreatMap();
         game.addBrick(rickPawn, 6, 6);
         game.addBrick(rickPawn2, 5, 6);
         //When checking the threat map around the queen
@@ -419,7 +422,6 @@ public class TestAlpha {
         //When checking if Rick is in checkmate
         boolean checkmate = game.playerIsInCheckmate(Player.RICK);
         //Then it should be true
-        game.printThreatMap();
         assertThat(checkmate, is(true));
     }
 
@@ -439,6 +441,7 @@ public class TestAlpha {
     @Test
     public void shouldNotHaveMortyInCheckWhenRookCanPrevent(){
         //Given a game where morty has a king at 3,7 and a rook at 7,6. And Rick has a rook at 2,0, a queen at 3,0 and a rook at 4,0
+        game.setTurnToPlayer(Player.MORTY);
         game.addBrick(mortyKing, 3, 7);
         game.addBrick(mortyRook, 0, 5);
         game.addBrick(rickRook2, 2, 0);
@@ -446,9 +449,65 @@ public class TestAlpha {
         game.addBrick(rickRook, 4, 0);
         //When checking if morty is in check
         boolean checkmate = game.playerIsInCheckmate(Player.MORTY);
-        game.printThreatMap();
         //Then it should be false
         assertThat(checkmate, is(false));
     }
-    
+
+
+    @Test
+    public void shouldHaveRickInTurnAtStartOfGame(){
+        //Given a game where rick is in turn
+        //When checking if rick is in turn
+        boolean rickInTurn = game.getPlayerInTurn() == Player.RICK;
+        //Then it should be true
+        assertThat(rickInTurn, is(true));
+    }
+
+    @Test
+    public void shouldHaveMortyInTurnAfterRickMoves(){
+        //Given a game where rick is in turn
+        game.addBrick(rickPawn, 1, 1);
+        //When rick moves a brick
+        Brick brick = game.getBrickAtBoard(1, 1);
+        game.moveBrick(brick, 0, 1);
+        //Then morty should be in turn
+        assertThat(game.getPlayerInTurn(), is(Player.MORTY));
+    }
+
+    @Test
+    public void shouldGivePlayer_Not_In_Turn_WhenRickTriesToMoveOnMortysTurn() {
+        //Given a game where morty is in turn
+        game.addBrick(rickPawn, 1, 1);
+        Brick brick = game.getBrickAtBoard(1, 1);
+        game.moveBrick(brick, 0, 1);
+        //When rick tries to move a brick
+        Status status = game.moveBrick(brick, 0, 1);
+        //Then he gets status Player_Not_In_Turn
+        assertThat(status, is(Status.PLAYER_NOT_IN_TURN));
+    }
+
+    @Test
+    public void shouldGiveNoWinnerWhenGameStarts(){
+        //Given a game where no one has won
+        game.addBrick(rickKing, 7, 7);
+        game.addBrick(mortyKing, 1, 1);
+        System.out.println(game.playerIsInCheckmate(Player.MORTY));
+        //When checking if there is a winner
+        Player winner = game.getWinner();
+        //Then it should be null
+        assertThat(winner, is(nullValue()));
+    }
+
+    @Test
+    public void shouldGiveMortyAsWinnerWhenRickIsInCheckmate(){
+        //Given a game where rick has a king at 7,7 and morty has a rook at 7,6 and a queen at 6,6
+        game.addBrick(rickKing, 0, 8);
+        game.addBrick(mortyRook, 7, 7);
+        game.addBrick(mortyQueen, 6, 8);
+        game.printThreatMap();
+        //When checking if there is a winner
+        Player winner = game.getWinner();
+        //Then it should be morty
+        assertThat(winner, is(Player.MORTY));
+    }
 }
