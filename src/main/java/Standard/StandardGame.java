@@ -458,7 +458,7 @@ public class StandardGame implements Game {
      * @return Status representing status of move
      */
     private static Status moveIsOutOfBoard(int deltax, int deltay, int[] currentCords) {
-        if(currentCords[0]+ deltay > 8 || currentCords[1]+ deltax >8){
+        if(currentCords[0]+ deltay > 8 || currentCords[1]+ deltax >8|| currentCords[0] + deltay < 0 || currentCords[1] + deltax<0){
             return Status.OUT_OF_BOARD_MOVE;
         }
         return null;
@@ -478,12 +478,12 @@ public class StandardGame implements Game {
         if(newBrickIsKing){
             kings.put(brick.getPlayer(),brick);
         }
+        threatMapUpdater(x, y, brick);
         //Update for bricks affected by placement of new brick
         if(threatMap[y][x]!= null){
             threatMapUpdaterForBrickAtPosition(y, x);
         }
 
-        threatMapUpdater(x, y, brick);
     }
 
     /**
@@ -493,18 +493,14 @@ public class StandardGame implements Game {
      * @param brick Brick representing brick
      */
     private void threatMapUpdater(int x, int y, Brick brick) {
-        if(threatMap[y][x] == null){
-            threatMap[y][x] = new HashSet<>();
-        }
+        createNewSetForThreatMapSpot(x, y);
         //Clear for previous threats by brick
-        for(int i = 0; i< threatMap.length; i++){
-            for(int j = 0; j<threatMap[0].length;j++){
-                if(threatMap[i][j]!= null){
-                    threatMap[i][j].remove(brick);
-                }
-            }
-        }
+        //clearPreviousThreatFromBrick(brick);
         //Add the new threat for brick
+        addNewThreatsToThreatMap(x, y, brick);
+    }
+
+    private void addNewThreatsToThreatMap(int x, int y, Brick brick) {
         if (brick.getType() == GameConstants.ROOK) {
             rookThreatMap(x, y, brick);
 
@@ -522,15 +518,29 @@ public class StandardGame implements Game {
                 if (outOfBoard) {
                     continue;
                 }
-                if (threatMap[y + move[0]][x + move[1]] == null) {
-                    threatMap[y + move[0]][x + move[1]] = new HashSet<>();
-                }
+                createNewSetForThreatMapSpot(x + move[1], y + move[0]);
 
                 threatMap[y + move[0]][x + move[1]].add(brick);
             }
         }
-
     }
+
+    private void clearPreviousThreatFromBrick(Brick brick) {
+        for(int i = 0; i< threatMap.length; i++){
+            for(int j = 0; j<threatMap[0].length;j++){
+                if(threatMap[i][j]!= null){
+                    threatMap[i][j].remove(brick);
+                }
+            }
+        }
+    }
+
+    private void createNewSetForThreatMapSpot(int x, int y) {
+        if(threatMap[y][x] == null){
+            threatMap[y][x] = new HashSet<>();
+        }
+    }
+
     /**
      * Method for updating the threat map
      * @param x int representing x coordinate of brick
@@ -540,19 +550,15 @@ public class StandardGame implements Game {
     private void rookThreatMap(int x, int y, Brick brick) {
         //for the positive Y axis
         for(int i = 1; i+ y < board.length; i++){
-            if(threatMap[y +i][x] == null){
-                threatMap[y +i][x] = new HashSet<>();
-            }
+            createNewSetForThreatMapSpot(x, y + i);
             threatMap[y +i][x].add(brick);
             if(board[y +i][x] != null){
                 break;
             }
         }
         //for the negative Y axis
-        for(int i = 1; y -i> 0; i++){
-            if(threatMap[y -i][x] == null){
-                threatMap[y -i][x] = new HashSet<>();
-            }
+        for(int i = 1; y -i>= 0; i++){
+            createNewSetForThreatMapSpot(x, y - i);
             threatMap[y -i][x].add(brick);
             if(board[y -i][x] != null){
                 break;
@@ -560,21 +566,16 @@ public class StandardGame implements Game {
         }
         //for the positive X axis
         for(int i = 1; i+ x < board.length; i++){
-            if(threatMap[y][x +i] == null){
-                threatMap[y][x +i] = new HashSet<>();
-            }
+            createNewSetForThreatMapSpot(x + i, y);
             threatMap[y][x +i].add(brick);
             if(board[y][x +i] != null){
                 break;
             }
         }
         //for the negative X axis
-        for(int i = 1; x -i> 0; i++){
-            if(threatMap[y][x -i] == null){
-                threatMap[y][x -i] = new HashSet<>();
-            }
+        for(int i = 1; x -i>= 0; i++){
+            createNewSetForThreatMapSpot(x - i, y);
             threatMap[y][x -i].add(brick);
-
             if(board[y][x -i] != null){
                 break;
             }
@@ -589,9 +590,7 @@ public class StandardGame implements Game {
     private void bishopThreatMap(int x, int y, Brick brick) {
         //For the positive Y and X axis
         for(int i = 0; i+ y < board.length && i+ x < board[0].length; i++){
-            if(threatMap[y +i][x +i] == null){
-                threatMap[y +i][x +i] = new HashSet<>();
-            }
+            createNewSetForThreatMapSpot(x + i, y + i);
             threatMap[y +i][x +i].add(brick);
             if(board[y +i][x +i] != null && board[y +i][x +i] != brick){
                 break;
@@ -599,9 +598,7 @@ public class StandardGame implements Game {
         }
         //For the positive Y and negative X axis
         for(int i = 0; i+ y < board.length && x -i>= 0; i++){
-            if(threatMap[y +i][x -i] == null){
-                threatMap[y +i][x -i] = new HashSet<>();
-            }
+            createNewSetForThreatMapSpot(x - i, y + i);
             threatMap[y +i][x -i].add(brick);
             if(board[y +i][x -i] != null && board[y +i][x -i] != brick){
                 break;
@@ -609,9 +606,7 @@ public class StandardGame implements Game {
         }
         //For the negative Y and negative X axis
         for(int i = 0; y -i>= 0 && x -i>= 0; i++){
-            if(threatMap[y -i][x -i] == null){
-                threatMap[y -i][x -i] = new HashSet<>();
-            }
+            createNewSetForThreatMapSpot(x - i, y - i);
             threatMap[y -i][x -i].add(brick);
             if(board[y -i][x -i] != null && board[y -i][x -i] != brick){
                 break;
@@ -620,9 +615,7 @@ public class StandardGame implements Game {
         //For the negative Y and positive X axis
         for(int i = 0; y -i>= 0 && x +i<board.length; i++){
             int test = x +i;
-            if(threatMap[y -i][x +i] == null){
-                threatMap[y -i][x +i] = new HashSet<>();
-            }
+            createNewSetForThreatMapSpot(x + i, y - i);
             threatMap[y -i][x +i].add(brick);
             if(board[y -i][x +i] != null && board[y -i][x +i] != brick){
                 break;
@@ -655,6 +648,7 @@ public class StandardGame implements Game {
             }
         }
         addBrick(brickAtTable,x,y);
+
         table.get(playerOwningBrick).remove(brickAtTable);
         return Status.OK;
     }
@@ -691,6 +685,24 @@ public class StandardGame implements Game {
         replaceBrickWithPromotedBrick(brick);
     }
 
+    @Override
+    public boolean getCheckmate(Player player) {
+        Brick playerKing = kings.get(player);
+        int[] kingCords = findBrickCords(playerKing);
+        List<int[]> kingMovePatterns = playerKing.getMovePatterns();
+        Status checkmateChecker = Status.PUTS_ONESELF_IN_CHECK;
+        for(int[] move : kingMovePatterns){
+            Status checkForLegalMove = legalMove(playerKing,move[1],move[0]);
+            boolean validMove = checkForLegalMove == Status.OK;
+            if(validMove){
+                checkmateChecker = checkForLegalMove;
+                break;
+            }
+        }
+        boolean legalMoveExist = checkmateChecker == Status.OK;
+        return !legalMoveExist;
+    }
+
     private void replaceBrickWithPromotedBrick(Brick brick) {
         int[] currentCords = findBrickCords(brick);
         int currentY =currentCords[0];
@@ -706,7 +718,7 @@ public class StandardGame implements Game {
             for(int j = 0; j<threatMap[0].length;j++){
                 String color = "\u001B[0m";
                 if(board[i][j]!= null){
-                    if(board[i][j].getType()== GameConstants.BISHOP){
+                    if(board[i][j].getType()== GameConstants.QUEEN){
                         color = "\u001B[34m";}
                     else {
                         color = "\u001B[31m";

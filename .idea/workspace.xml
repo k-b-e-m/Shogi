@@ -6,11 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6508ab0d-f71a-4197-8d0f-593d0920e8dc" name="Changes" comment="Enabled to place bricks and some status exceptions for this">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Brick.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Brick.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Framework/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/GameConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/GameConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Framework/PredefinedMovepatterns.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Framework/PredefinedMovepatterns.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardBrick.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Standard/StandardGame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/TestList.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/TestList.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/TestAlpha.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/TestAlpha.java" afterDir="false" />
@@ -133,7 +129,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="TestAlpha.shouldGiveMortyInCheckWhenPawnIsMovedToCheckKing" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="TestAlpha.shouldHaveRickInCheckmate" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -146,7 +142,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;TestAlpha.shouldGiveMortyInCheckWhenPawnIsMovedToCheckKing&quot;" />
+            <option value="&quot;TestAlpha.shouldHaveRickInCheckmate&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -157,7 +153,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="TestAlpha.shouldHaveBishopAtCorrectThreatMap" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="TestAlpha.shouldNotHaveMortyInCheckWhenRookCanPrevent" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -170,7 +166,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;TestAlpha.shouldHaveBishopAtCorrectThreatMap&quot;" />
+            <option value="&quot;TestAlpha.shouldNotHaveMortyInCheckWhenRookCanPrevent&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -181,7 +177,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="TestAlpha.shouldHaveBishopAtCorrectThreatMapWhenPawnIsInWay" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="TestAlpha.shouldNotHaveRickInCheckmate" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -194,7 +190,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;TestAlpha.shouldHaveBishopAtCorrectThreatMapWhenPawnIsInWay&quot;" />
+            <option value="&quot;TestAlpha.shouldNotHaveRickInCheckmate&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -232,10 +228,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.TestAlpha" />
-        <item itemvalue="Gradle.TestAlpha.shouldGiveMortyInCheckWhenPawnIsMovedToCheckKing" />
+        <item itemvalue="Gradle.TestAlpha.shouldNotHaveMortyInCheckWhenRookCanPrevent" />
         <item itemvalue="Gradle.TestAlpha.shouldUpdateThreatMapCorrectWhenPawnIsInWayForQueen" />
-        <item itemvalue="Gradle.TestAlpha.shouldHaveBishopAtCorrectThreatMap" />
-        <item itemvalue="Gradle.TestAlpha.shouldHaveBishopAtCorrectThreatMapWhenPawnIsInWay" />
+        <item itemvalue="Gradle.TestAlpha.shouldHaveRickInCheckmate" />
+        <item itemvalue="Gradle.TestAlpha.shouldNotHaveRickInCheckmate" />
       </list>
     </recent_temporary>
   </component>
@@ -258,7 +254,9 @@
       <workItem from="1704571621693" duration="8707000" />
       <workItem from="1704645607790" duration="12000" />
       <workItem from="1706175075991" duration="6574000" />
-      <workItem from="1706276419043" duration="5992000" />
+      <workItem from="1706276419043" duration="6183000" />
+      <workItem from="1706397843296" duration="167000" />
+      <workItem from="1706442286553" duration="6620000" />
     </task>
     <task id="LOCAL-00001" summary="First test passed for Alpha">
       <created>1698552056237</created>
@@ -303,5 +301,24 @@
     <MESSAGE value="A brick now have move patterns and connot move out of board" />
     <MESSAGE value="Enabled to place bricks and some status exceptions for this" />
     <option name="LAST_COMMIT_MESSAGE" value="Enabled to place bricks and some status exceptions for this" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/Standard/StandardGame.java</url>
+          <line>694</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/TestAlpha.java</url>
+          <line>443</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Shogi$TestAlpha.ic" NAME="TestAlpha Coverage Results" MODIFIED="1706397857951" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

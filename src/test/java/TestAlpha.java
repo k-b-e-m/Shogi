@@ -29,6 +29,9 @@ public class TestAlpha {
     private Brick rickBishop;
     private Brick rickQueen;
     private Brick rickSilver;
+    private Brick rickKing;
+    private Brick mortyQueen;
+    private Brick rickRook2;
 
     @BeforeEach
 
@@ -41,9 +44,13 @@ public class TestAlpha {
         mortyKing = new StandardBrick(Player.MORTY, KingPattern, GameConstants.KING, null);
         mortyRook = new StandardBrick(Player.MORTY, RookPattern, GameConstants.ROOK, new StandardBrick(Player.MORTY, DragonPattern, GameConstants.DRAGON, null));
         rickRook = new StandardBrick(Player.RICK, RookPattern, GameConstants.ROOK, new StandardBrick(Player.RICK, DragonPattern, GameConstants.DRAGON, null));
+        rickRook2 = new StandardBrick(Player.RICK, RookPattern, GameConstants.ROOK, new StandardBrick(Player.RICK, DragonPattern, GameConstants.DRAGON, null));
         rickBishop = new StandardBrick(Player.RICK, BishopPattern, GameConstants.BISHOP, new StandardBrick(Player.RICK, HorsePattern, GameConstants.DRAGON, null));
         rickQueen = new StandardBrick(Player.RICK, QueenPattern, GameConstants.QUEEN,null);
         rickSilver = new StandardBrick(Player.RICK, SilverPattern, GameConstants.SILVER, new StandardBrick(Player.RICK, PromotedSilverPattern, GameConstants.PROMOTED_SILVER, null));
+        rickKing = new StandardBrick(Player.RICK, KingPattern, GameConstants.KING, null);
+        mortyQueen = new StandardBrick(Player.MORTY, QueenPattern, GameConstants.QUEEN,null);
+
     }
 
 
@@ -347,12 +354,12 @@ public class TestAlpha {
         game.addBrick(rickQueen, 5, 5);
         game.addBrick(rickPawn, 6, 6);
         game.addBrick(rickPawn, 5, 6);
-        game.printThreatMap();
         //When checking the threat map around the queen
         boolean threatAt66 = game.getThreatMap()[6][6].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
         boolean threatAt77 = game.getThreatMap()[7][7].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
         boolean threatAt57 = game.getThreatMap()[5][7].stream().map(brick -> brick.getType()).collect(Collectors.toList()).contains(GameConstants.QUEEN);
         //Then it should have updated correctly
+        game.printThreatMap();
         assertThat(threatAt66, is(true));
         assertThat(threatAt77, is(false));
         assertThat(threatAt57, is(false));
@@ -402,4 +409,54 @@ public class TestAlpha {
         //Then it should be a Tokin Piece
         assertThat(game.getBrickAtBoard(1, 6).getType(), is(GameConstants.TOKIN));
     }
+
+    @Test
+    public void shouldHaveRickInCheckmate(){
+        //Given  a game where Rick has a king at 0,0, and morty has a rook at 3,0 and a queen at 6,1
+        game.addBrick(rickKing, 0, 0);
+        game.addBrick(mortyRook, 3, 0);
+        game.addBrick(mortyQueen, 6, 1);
+        //When checking if Rick is in checkmate
+        boolean checkmate = game.getCheckmate(Player.RICK);
+        //Then it should be true
+        game.printThreatMap();
+        assertThat(checkmate, is(true));
+    }
+
+    @Test
+    public void shouldNotHaveRickInCheckmate(){
+        //Given a game where rick has a king at 1,5 and morty has a pawn at 1,4
+        game.addBrick(rickKing, 1, 5);
+        game.addBrick(mortyPawn, 1, 4);
+        //When checking if morty is in checkmate
+        boolean checkmate = game.getCheckmate(Player.RICK);
+        //Then it should be false
+        assertThat(checkmate, is(false));
+
+    }
+
+//    When Morty has a king at 3,7 and a rook at  7,6 and rick has a rook at 2,0, a queen at 3,0 and a rook at 4,0, When checked if Morty is in check, it is false.
+    @Test
+    public void shouldNotHaveMortyInCheckWhenRookCanPrevent(){
+        //Given a game where morty has a king at 3,7 and a rook at 7,6. And Rick has a rook at 2,0, a queen at 3,0 and a rook at 4,0
+        game.addBrick(mortyKing, 3, 7);
+        game.addBrick(mortyRook, 7, 6);
+        game.addBrick(rickRook2, 2, 0);
+        System.out.println("brick 1");
+        game.printThreatMap();
+        game.addBrick(rickQueen, 3, 0);
+        System.out.println("brick 2");
+        game.printThreatMap();
+        game.addBrick(rickRook, 4, 0);
+        System.out.println("brick 3");
+        game.printThreatMap();
+        //When checking if morty is in check
+        boolean check = game.getCheck(Player.MORTY);
+        //Then it should be false
+        assertThat(check, is(false));
+    }
+
+
+
+
 }

@@ -76,4 +76,6 @@ public interface Game {
     boolean getCheck(Player player);
 
      void promote(Brick brick);
+
+    boolean getCheckmate(Player player);
 }
